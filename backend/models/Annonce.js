@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const annonceSchema = new mongoose.Schema({
     conducteurId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Conducteur',
+        ref: 'User',
         required: true
     },
     lieuDepart: {
@@ -33,11 +33,11 @@ const annonceSchema = new mongoose.Schema({
     dimensions: {
         longueurMax: { type: Number, required: true },
         largeurMax: { type: Number, required: true },
-        hauteurMax: { type: Number, required: true }   
+        hauteurMax: { type: Number, required: true }
     },
     poidsMaximum: {
         type: Number,
-        required: true 
+        required: true
     },
     typeMarchandise: {
         type: String,
@@ -46,7 +46,7 @@ const annonceSchema = new mongoose.Schema({
     },
     capaciteDisponible: {
         type: Number,
-        required: true 
+        required: true
     },
     prix: {
         type: Number,

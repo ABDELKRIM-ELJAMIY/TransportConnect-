@@ -179,6 +179,110 @@ const validateUserUpdate = [
     handleValidationErrors
 ];
 
+// Validation pour les annonces
+const validateAnnonce = [
+    body('lieuDepart.nom')
+        .trim()
+        .notEmpty()
+        .withMessage('Le nom du lieu de départ est requis')
+        .isLength({ min: 2, max: 100 })
+        .withMessage('Le nom du lieu de départ doit contenir entre 2 et 100 caractères'),
+
+    body('destination.nom')
+        .trim()
+        .notEmpty()
+        .withMessage('Le nom de la destination est requis')
+        .isLength({ min: 2, max: 100 })
+        .withMessage('Le nom de la destination doit contenir entre 2 et 100 caractères'),
+
+    body('dateDepart')
+        .notEmpty()
+        .withMessage('La date de départ est requise')
+        .isISO8601()
+        .withMessage('Format de date invalide')
+        .custom((value) => {
+            const date = new Date(value);
+            const now = new Date();
+            // Allow dates from the past year for testing flexibility
+            const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+            if (date < oneYearAgo) {
+                throw new Error('La date de départ doit être dans l\'année en cours ou l\'année précédente');
+            }
+            return true;
+        }),
+
+    body('dateArrivee')
+        .optional()
+        .isISO8601()
+        .withMessage('Format de date d\'arrivée invalide')
+        .custom((value, { req }) => {
+            if (value && req.body.dateDepart) {
+                const dateArrivee = new Date(value);
+                const dateDepart = new Date(req.body.dateDepart);
+                if (dateArrivee <= dateDepart) {
+                    throw new Error('La date d\'arrivée doit être après la date de départ');
+                }
+            }
+            return true;
+        }),
+
+    body('dimensions.longueurMax')
+        .isFloat({ min: 0.1, max: 100 })
+        .withMessage('La longueur maximale doit être entre 0.1 et 100 mètres'),
+
+    body('dimensions.largeurMax')
+        .isFloat({ min: 0.1, max: 100 })
+        .withMessage('La largeur maximale doit être entre 0.1 et 100 mètres'),
+
+    body('dimensions.hauteurMax')
+        .isFloat({ min: 0.1, max: 100 })
+        .withMessage('La hauteur maximale doit être entre 0.1 et 100 mètres'),
+
+    body('poidsMaximum')
+        .isFloat({ min: 0.1, max: 50000 })
+        .withMessage('Le poids maximum doit être entre 0.1 et 50000 kg'),
+
+    body('typeMarchandise')
+        .optional()
+        .isIn(['fragile', 'normale', 'dangereuse', 'alimentaire', 'electronique', 'autre'])
+        .withMessage('Type de marchandise invalide'),
+
+    body('capaciteDisponible')
+        .isFloat({ min: 0.1 })
+        .withMessage('La capacité disponible doit être supérieure à 0'),
+
+    body('prix')
+        .isFloat({ min: 0 })
+        .withMessage('Le prix doit être positif'),
+
+    body('nombrePlacesDisponibles')
+        .optional()
+        .isInt({ min: 1, max: 10 })
+        .withMessage('Le nombre de places disponibles doit être entre 1 et 10'),
+
+    body('isUrgent')
+        .optional()
+        .isBoolean()
+        .withMessage('Le statut urgent doit être un booléen'),
+
+    body('conditions.accepteAnimaux')
+        .optional()
+        .isBoolean()
+        .withMessage('Le statut d\'acceptation d\'animaux doit être un booléen'),
+
+    body('conditions.fumeurAccepte')
+        .optional()
+        .isBoolean()
+        .withMessage('Le statut d\'acceptation de fumeur doit être un booléen'),
+
+    body('conditions.conditionsSpeciales')
+        .optional()
+        .isLength({ max: 500 })
+        .withMessage('Les conditions spéciales ne peuvent pas dépasser 500 caractères'),
+
+    handleValidationErrors
+];
+
 // Validation pour le changement de mot de passe
 const validatePasswordChange = [
     body('currentPassword')
@@ -290,6 +394,7 @@ module.exports = {
     validateLogin,
     validateProfileUpdate,
     validateUserUpdate,
+    validateAnnonce,
     validatePasswordChange,
     validateObjectId,
     handleValidationErrors,

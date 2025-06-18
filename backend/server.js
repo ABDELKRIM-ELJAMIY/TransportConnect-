@@ -23,8 +23,8 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
+app.use('/api/annonces', require('./routes/annonces'));
 
-// Middleware de gestion d'erreurs global (doit être en dernier)
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
