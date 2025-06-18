@@ -138,6 +138,47 @@ const validateProfileUpdate = [
     handleValidationErrors
 ];
 
+// Validation pour la mise à jour d'utilisateur (admin)
+const validateUserUpdate = [
+    body('nom')
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 50 })
+        .withMessage('Le nom doit contenir entre 2 et 50 caractères')
+        .matches(/^[a-zA-ZÀ-ÿ\s'-]+$/)
+        .withMessage('Le nom ne peut contenir que des lettres, espaces, apostrophes et tirets'),
+
+    body('prenom')
+        .optional()
+        .trim()
+        .isLength({ min: 2, max: 50 })
+        .withMessage('Le prénom doit contenir entre 2 et 50 caractères')
+        .matches(/^[a-zA-ZÀ-ÿ\s'-]+$/)
+        .withMessage('Le prénom ne peut contenir que des lettres, espaces, apostrophes et tirets'),
+
+    body('email')
+        .optional()
+        .trim()
+        .isEmail()
+        .withMessage('Format d\'email invalide')
+        .normalizeEmail()
+        .isLength({ max: 100 })
+        .withMessage('L\'email ne peut pas dépasser 100 caractères'),
+
+    body('telephone')
+        .optional()
+        .trim()
+        .matches(/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/)
+        .withMessage('Format de numéro de téléphone français invalide'),
+
+    body('role')
+        .optional()
+        .isIn(['conducteur', 'expediteur', 'admin'])
+        .withMessage('Le rôle doit être "conducteur", "expediteur" ou "admin"'),
+
+    handleValidationErrors
+];
+
 // Validation pour le changement de mot de passe
 const validatePasswordChange = [
     body('currentPassword')
@@ -248,6 +289,7 @@ module.exports = {
     validateRegister,
     validateLogin,
     validateProfileUpdate,
+    validateUserUpdate,
     validatePasswordChange,
     validateObjectId,
     handleValidationErrors,
