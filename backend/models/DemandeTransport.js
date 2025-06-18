@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const demandeTransportSchema = new mongoose.Schema({
     expediteurId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Expediteur',
+        ref: 'User',
         required: true
     },
     annonceId: {
@@ -18,7 +18,7 @@ const demandeTransportSchema = new mongoose.Schema({
     dimensions: {
         longueur: { type: Number, required: true },
         largeur: { type: Number, required: true },
-        hauteur: { type: Number, required: true } 
+        hauteur: { type: Number, required: true }
     },
     poids: {
         type: Number,
@@ -37,7 +37,7 @@ const demandeTransportSchema = new mongoose.Schema({
     dateReponse: Date,
     commentaire: String,
     raisonRefus: String,
-    valeurDeclaree: Number, 
+    valeurDeclaree: Number,
     assuranceRequise: {
         type: Boolean,
         default: false

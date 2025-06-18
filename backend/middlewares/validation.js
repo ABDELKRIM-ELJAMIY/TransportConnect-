@@ -389,12 +389,135 @@ const checkRequiredFields = (fields) => {
     };
 };
 
+const validateDemande = [
+    body('annonceId')
+        .isMongoId()
+        .withMessage('ID annonce invalide'),
+
+    body('description')
+        .trim()
+        .notEmpty()
+        .withMessage('La description est requise')
+        .isLength({ min: 10, max: 1000 })
+        .withMessage('La description doit contenir entre 10 et 1000 caractères'),
+
+    body('dimensions.longueur')
+        .isFloat({ min: 0.1, max: 100 })
+        .withMessage('La longueur doit être entre 0.1 et 100 mètres'),
+
+    body('dimensions.largeur')
+        .isFloat({ min: 0.1, max: 100 })
+        .withMessage('La largeur doit être entre 0.1 et 100 mètres'),
+
+    body('dimensions.hauteur')
+        .isFloat({ min: 0.1, max: 100 })
+        .withMessage('La hauteur doit être entre 0.1 et 100 mètres'),
+
+    body('poids')
+        .isFloat({ min: 0.1, max: 50000 })
+        .withMessage('Le poids doit être entre 0.1 et 50000 kg'),
+
+    body('typeColis')
+        .isIn(['fragile', 'normale', 'dangereuse', 'alimentaire', 'electronique', 'autre'])
+        .withMessage('Type de colis invalide'),
+
+    body('valeurDeclaree')
+        .optional()
+        .isFloat({ min: 0 })
+        .withMessage('La valeur déclarée doit être positive'),
+
+    body('assuranceRequise')
+        .optional()
+        .isBoolean()
+        .withMessage('Le statut d\'assurance doit être un booléen'),
+
+    body('instructionsSpeciales')
+        .optional()
+        .isLength({ max: 500 })
+        .withMessage('Les instructions spéciales ne peuvent pas dépasser 500 caractères'),
+
+    body('lieuRecuperation.nom')
+        .trim()
+        .notEmpty()
+        .withMessage('Le nom du lieu de récupération est requis')
+        .isLength({ min: 2, max: 100 })
+        .withMessage('Le nom du lieu de récupération doit contenir entre 2 et 100 caractères'),
+
+    body('lieuRecuperation.adresse')
+        .optional()
+        .isLength({ max: 200 })
+        .withMessage('L\'adresse de récupération ne peut pas dépasser 200 caractères'),
+
+    body('lieuRecuperation.instructions')
+        .optional()
+        .isLength({ max: 300 })
+        .withMessage('Les instructions de récupération ne peuvent pas dépasser 300 caractères'),
+
+    body('lieuLivraison.nom')
+        .trim()
+        .notEmpty()
+        .withMessage('Le nom du lieu de livraison est requis')
+        .isLength({ min: 2, max: 100 })
+        .withMessage('Le nom du lieu de livraison doit contenir entre 2 et 100 caractères'),
+
+    body('lieuLivraison.adresse')
+        .optional()
+        .isLength({ max: 200 })
+        .withMessage('L\'adresse de livraison ne peut pas dépasser 200 caractères'),
+
+    body('lieuLivraison.instructions')
+        .optional()
+        .isLength({ max: 300 })
+        .withMessage('Les instructions de livraison ne peuvent pas dépasser 300 caractères'),
+
+    body('contactRecuperation.nom')
+        .trim()
+        .notEmpty()
+        .withMessage('Le nom du contact de récupération est requis')
+        .isLength({ min: 2, max: 50 })
+        .withMessage('Le nom du contact de récupération doit contenir entre 2 et 50 caractères'),
+
+    body('contactRecuperation.telephone')
+        .trim()
+        .notEmpty()
+        .withMessage('Le téléphone du contact de récupération est requis')
+        .matches(/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/)
+        .withMessage('Format de numéro de téléphone français invalide pour le contact de récupération'),
+
+    body('contactLivraison.nom')
+        .trim()
+        .notEmpty()
+        .withMessage('Le nom du contact de livraison est requis')
+        .isLength({ min: 2, max: 50 })
+        .withMessage('Le nom du contact de livraison doit contenir entre 2 et 50 caractères'),
+
+    body('contactLivraison.telephone')
+        .trim()
+        .notEmpty()
+        .withMessage('Le téléphone du contact de livraison est requis')
+        .matches(/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/)
+        .withMessage('Format de numéro de téléphone français invalide pour le contact de livraison'),
+
+    body('datePreferenceRecuperation')
+        .optional()
+        .isISO8601()
+        .withMessage('Format de date de préférence de récupération invalide'),
+
+    body('datePreferenceLivraison')
+        .optional()
+        .isISO8601()
+        .withMessage('Format de date de préférence de livraison invalide'),
+
+    handleValidationErrors
+];
+
 module.exports = {
     validateRegister,
     validateLogin,
     validateProfileUpdate,
     validateUserUpdate,
     validateAnnonce,
+    validateDemande,
     validatePasswordChange,
     validateObjectId,
     handleValidationErrors,
