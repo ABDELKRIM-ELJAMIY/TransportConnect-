@@ -25,6 +25,7 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/annonces', require('./routes/annonces'));
 app.use('/api/demandes', require('./routes/demandes'));
+app.use('/api/evaluations', require('./routes/evaluations'));
 
 app.use(errorHandler);
 
