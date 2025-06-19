@@ -6,7 +6,12 @@ const {
     updateUser,
     toggleUserStatus,
     toggleUserVerification,
-    deleteUser
+    deleteUser,
+    getTotalUsers,
+    getTotalAnnonces,
+    getAcceptanceRate,
+    getTotalDemandes,
+    getActiveUsers
 } = require('../controllers/userController');
 
 const { protect, authorizeRoles } = require('../middlewares/auth');
@@ -26,5 +31,11 @@ router.patch('/:id/status', toggleUserStatus);
 router.patch('/:id/verify', toggleUserVerification);
 
 router.delete('/:id', deleteUser);
+
+router.get('/admin/stats/users', getTotalUsers);
+router.get('/admin/stats/annonces', getTotalAnnonces);
+router.get('/admin/stats/acceptance-rate', getAcceptanceRate);
+router.get('/admin/stats/demandes', getTotalDemandes);
+router.get('/admin/stats/active-users', getActiveUsers);
 
 module.exports = router; 

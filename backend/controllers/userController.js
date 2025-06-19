@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const Annonce = require('../models/Annonce');
+const DemandeTransport = require('../models/DemandeTransport');
 
 exports.getAllUsers = async (req, res) => {
     try {
@@ -262,5 +264,55 @@ exports.deleteUser = async (req, res) => {
             message: 'Erreur lors de la suppression de l\'utilisateur',
             error: error.message
         });
+    }
+};
+
+exports.getTotalUsers = async (req, res) => {
+    try {
+        const count = await User.countDocuments();
+        res.json({ totalUsers: count });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getTotalAnnonces = async (req, res) => {
+    try {
+        const count = await Annonce.countDocuments();
+        res.json({ totalAnnonces: count });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getAcceptanceRate = async (req, res) => {
+    try {
+        const total = await DemandeTransport.countDocuments();
+        const accepted = await DemandeTransport.countDocuments({ statut: 'acceptee' });
+        const rate = total === 0 ? 0 : (accepted / total) * 100;
+        res.json({ acceptanceRate: rate });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getTotalDemandes = async (req, res) => {
+    try {
+        const count = await DemandeTransport.countDocuments();
+        res.json({ totalDemandes: count });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getActiveUsers = async (req, res) => {
+    try {
+        // Consider users active if they logged in within the last 7 days
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        const count = await User.countDocuments({ lastLogin: { $gte: oneWeekAgo } });
+        res.json({ activeUsers: count });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
 }; 
