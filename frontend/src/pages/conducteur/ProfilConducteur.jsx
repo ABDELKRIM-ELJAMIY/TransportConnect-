@@ -41,6 +41,13 @@ const ProfilConducteur = () => {
         setIsEditing(false);
     };
 
+    const handleProfileChange = (field, value) => {
+        setProfileData(prev => ({
+            ...prev,
+            [field]: value
+        }));
+    };
+
     const tabs = [
         { id: "profile", label: "Profil", icon: User },
         { id: "vehicle", label: "Véhicule", icon: Truck },
@@ -147,8 +154,8 @@ const ProfilConducteur = () => {
                                                 key={tab.id}
                                                 onClick={() => setActiveTab(tab.id)}
                                                 className={`flex items-center space-x-2 px-4 py-2 rounded-lg flex-1 transition-all duration-300 ${activeTab === tab.id
-                                                        ? "bg-white text-blue-600 shadow-sm"
-                                                        : "text-gray-600 hover:text-gray-800"
+                                                    ? "bg-white text-blue-600 shadow-sm"
+                                                    : "text-gray-600 hover:text-gray-800"
                                                     }`}
                                             >
                                                 <Icon size={16} />
@@ -196,6 +203,7 @@ const ProfilConducteur = () => {
                                                 <input
                                                     type="text"
                                                     value={profileData.nom}
+                                                    onChange={(e) => handleProfileChange('nom', e.target.value)}
                                                     disabled={!isEditing}
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50"
                                                 />
@@ -205,6 +213,7 @@ const ProfilConducteur = () => {
                                                 <input
                                                     type="email"
                                                     value={profileData.email}
+                                                    onChange={(e) => handleProfileChange('email', e.target.value)}
                                                     disabled={!isEditing}
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50"
                                                 />
@@ -214,6 +223,7 @@ const ProfilConducteur = () => {
                                                 <input
                                                     type="tel"
                                                     value={profileData.telephone}
+                                                    onChange={(e) => handleProfileChange('telephone', e.target.value)}
                                                     disabled={!isEditing}
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50"
                                                 />
@@ -223,6 +233,7 @@ const ProfilConducteur = () => {
                                                 <input
                                                     type="date"
                                                     value={profileData.dateNaissance}
+                                                    onChange={(e) => handleProfileChange('dateNaissance', e.target.value)}
                                                     disabled={!isEditing}
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50"
                                                 />
@@ -232,6 +243,7 @@ const ProfilConducteur = () => {
                                                 <input
                                                     type="text"
                                                     value={profileData.adresse}
+                                                    onChange={(e) => handleProfileChange('adresse', e.target.value)}
                                                     disabled={!isEditing}
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50"
                                                 />
@@ -241,6 +253,7 @@ const ProfilConducteur = () => {
                                                 <input
                                                     type="text"
                                                     value={profileData.permisConduire}
+                                                    onChange={(e) => handleProfileChange('permisConduire', e.target.value)}
                                                     disabled={!isEditing}
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50"
                                                 />
@@ -250,6 +263,7 @@ const ProfilConducteur = () => {
                                                 <input
                                                     type="text"
                                                     value={profileData.experience}
+                                                    onChange={(e) => handleProfileChange('experience', e.target.value)}
                                                     disabled={!isEditing}
                                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-50"
                                                 />

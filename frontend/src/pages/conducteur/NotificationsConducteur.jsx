@@ -130,36 +130,36 @@ const NotificationsConducteur = () => {
     const getPriorityColor = (priority) => {
         switch (priority) {
             case "high":
-                return "border-l-red-500";
+                return "border-l-[6px] border-[#fc4b41]";
             case "medium":
-                return "border-l-yellow-500";
+                return "border-l-[6px] border-[#f6bf5a]";
             case "low":
-                return "border-l-blue-500";
+                return "border-l-[6px] border-[#408e9a]";
             default:
-                return "border-l-gray-300";
+                return "border-l-[6px] border-[#bbbbbb]";
         }
     };
 
     const getIconColor = (type) => {
         switch (type) {
             case "trip_request":
-                return "text-blue-600 bg-blue-100";
+                return "text-[#226cac] bg-[#bbbbbb]";
             case "rating":
-                return "text-yellow-600 bg-yellow-100";
+                return "text-[#f6bf5a] bg-[#bbbbbb]";
             case "payment":
-                return "text-green-600 bg-green-100";
+                return "text-[#408e9a] bg-[#bbbbbb]";
             case "system":
-                return "text-purple-600 bg-purple-100";
+                return "text-[#fc4b41] bg-[#bbbbbb]";
             case "announcement":
-                return "text-indigo-600 bg-indigo-100";
+                return "text-[#226cac] bg-[#bbbbbb]";
             case "trip_reminder":
-                return "text-orange-600 bg-orange-100";
+                return "text-[#f6bf5a] bg-[#bbbbbb]";
             case "cancellation":
-                return "text-red-600 bg-red-100";
+                return "text-[#fc4b41] bg-[#bbbbbb]";
             case "promotion":
-                return "text-pink-600 bg-pink-100";
+                return "text-[#408e9a] bg-[#bbbbbb]";
             default:
-                return "text-gray-600 bg-gray-100";
+                return "text-[#bbbbbb] bg-[#bbbbbb]";
         }
     };
 

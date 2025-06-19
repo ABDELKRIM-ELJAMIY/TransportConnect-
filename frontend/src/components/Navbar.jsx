@@ -1,90 +1,114 @@
-import React, { useState } from 'react';
-import { Truck, Menu, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Truck, Menu, X, ArrowRight } from 'lucide-react';
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 20);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
-        <nav className="fixed w-full bg-white/95 backdrop-blur-md shadow-sm z-50 border-b border-gray-100">
+        <nav className={`fixed top-4 left-4 right-4 z-40 transition-all duration-500 rounded-2xl ${isScrolled
+            ? 'bg-white/95 backdrop-blur-xl shadow-xl border border-gray-200/50'
+            : 'bg-white/80 backdrop-blur-md border border-gray-200/30'
+            }`}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
-                    <div className="flex items-center space-x-2">
-                        <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center">
-                            <Truck className="w-6 h-6 text-white" />
+                    <div className="flex items-center group">
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl blur-lg opacity-20 group-hover:opacity-40 transition-opacity duration-300"></div>
+                            <div className="relative w-10 h-10 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 shadow-lg">
+                                <Truck className="h-5 w-5 text-white" />
+                            </div>
                         </div>
-                        <span className="text-2xl font-bold text-indigo-600">
+                        <span className="ml-3 text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent group-hover:from-blue-600 group-hover:to-indigo-600 transition-all duration-300">
                             TransportConnect
                         </span>
                     </div>
 
-                    {/* Desktop Menu */}
-                    <div className="hidden md:flex items-center space-x-8">
-                        <a href="#features" className="text-gray-700 hover:text-indigo-600 transition-colors">Fonctionnalités</a>
-                        <a href="#how-it-works" className="text-gray-700 hover:text-indigo-600 transition-colors">Comment ça marche</a>
-                        <a href="#testimonials" className="text-gray-700 hover:text-indigo-600 transition-colors">Témoignages</a>
-                        <a href="#contact" className="text-gray-700 hover:text-indigo-600 transition-colors">Contact</a>
-                        <a href="/login" className="text-indigo-600 hover:text-indigo-700 font-medium">Se connecter</a>
-                        <a
-                            href="/register"
-                            className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-                        >
-                            S'inscrire
+                    <div className="hidden md:flex items-center space-x-1">
+                        <a href="about" className="group relative px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 font-medium transition-all duration-300 hover:bg-gray-50">
+                            <span className="relative z-10">À propos</span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </a>
+
+                        <a href="login" className="group relative px-4 py-2 rounded-xl text-gray-700 hover:text-blue-600 font-medium transition-all duration-300 hover:bg-gray-50 ml-4">
+                            <span className="relative z-10">Se connecter</span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </a>
+
+                        <a href="register" className="group relative px-6 py-2 ml-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 hover:-translate-y-0.5 transition-all duration-300 overflow-hidden">
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-700 to-indigo-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            <span className="relative z-10 flex items-center">
+                                S'inscrire
+                                <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-300" />
+                            </span>
                         </a>
                     </div>
 
-                    {/* Mobile Menu Button */}
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
-                        className="md:hidden p-2 rounded-lg hover:bg-gray-100 text-gray-700"
+                        className="md:hidden relative p-2 rounded-xl text-gray-700 hover:text-blue-600 hover:bg-gray-50 transition-all duration-300 group"
                     >
-                        {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        <div className="relative z-10">
+                            {isMenuOpen ? (
+                                <X className="h-6 w-6 transform rotate-90" />
+                            ) : (
+                                <Menu className="h-6 w-6" />
+                            )}
+                        </div>
                     </button>
                 </div>
             </div>
 
-            {/* Mobile Menu */}
-            {isMenuOpen && (
-                <div className="md:hidden bg-white border-t border-gray-100">
-                    <div className="px-4 py-2 space-y-3">
+            {/* Mobile Menu with creative animations */}
+            <div className={`md:hidden transition-all duration-500 ease-out ${isMenuOpen
+                ? 'max-h-96 opacity-100'
+                : 'max-h-0 opacity-0 pointer-events-none'
+                }`}>
+                <div className="px-4 py-4 bg-white/95 backdrop-blur-xl border-t border-gray-200/50 rounded-b-2xl">
+                    <div className="space-y-2">
                         <a
-                            href="#features"
-                            className="block py-2 px-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
+                            href="#about"
+                            className={`block px-4 py-3 rounded-xl text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 font-medium transition-all duration-300 transform ${isMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                                }`}
+                            style={{ transitionDelay: '100ms' }}
                         >
-                            Fonctionnalités
+                            À propos
                         </a>
+
                         <a
-                            href="#how-it-works"
-                            className="block py-2 px-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
-                        >
-                            Comment ça marche
-                        </a>
-                        <a
-                            href="#testimonials"
-                            className="block py-2 px-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
-                        >
-                            Témoignages
-                        </a>
-                        <a
-                            href="#contact"
-                            className="block py-2 px-2 text-gray-700 hover:text-indigo-600 hover:bg-indigo-50 rounded transition-colors"
-                        >
-                            Contact
-                        </a>
-                        <a
-                            href="/login"
-                            className="block py-2 px-2 text-indigo-600 font-medium hover:bg-indigo-50 rounded transition-colors"
+                            href="login"
+                            className={`block px-4 py-3 rounded-xl text-gray-700 hover:text-blue-600 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 font-medium transition-all duration-300 transform ${isMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                                }`}
+                            style={{ transitionDelay: '200ms' }}
                         >
                             Se connecter
                         </a>
+
                         <a
-                            href="/register"
-                            className="block py-2 px-2 bg-indigo-600 text-white rounded-lg text-center hover:bg-indigo-700 transition-colors"
+                            href="register"
+                            className={`block px-4 py-3 mt-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 text-center group ${isMenuOpen ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'
+                                }`}
+                            style={{ transitionDelay: '300ms' }}
                         >
-                            S'inscrire
+                            <div className="flex items-center justify-center">
+                                S'inscrire
+                                <ArrowRight className="ml-2 h-4 w-4 transform group-hover:translate-x-1 transition-transform duration-300" />
+                            </div>
                         </a>
                     </div>
                 </div>
-            )}
+            </div>
+
+            <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent rounded-b-2xl"></div>
         </nav>
     );
 };
