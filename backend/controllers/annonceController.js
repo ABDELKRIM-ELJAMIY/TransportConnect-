@@ -1,5 +1,6 @@
 const Annonce = require('../models/Annonce');
 const User = require('../models/User');
+const Trajet = require('../models/Trajet');
 
 exports.createAnnonce = async (req, res) => {
     try {
@@ -26,11 +27,16 @@ exports.createAnnonce = async (req, res) => {
             });
         }
 
+        let etapes = etapesIntermediaires || [];
+        if (Array.isArray(etapes) && etapes.length > 0 && typeof etapes[0] === 'string') {
+            etapes = etapes.map((etape, idx) => ({ nom: etape, ordre: idx + 1 }));
+        }
+
         const newAnnonce = new Annonce({
             conducteurId: req.user.id,
             lieuDepart,
             destination,
-            etapesIntermediaires: etapesIntermediaires || [],
+            etapesIntermediaires: etapes,
             dateDepart,
             dateArrivee,
             dimensions,
@@ -235,9 +241,12 @@ exports.deleteAnnonce = async (req, res) => {
         annonce.statut = 'annulee';
         await annonce.save();
 
+        // Delete associated trajet
+        await Trajet.deleteOne({ annonceId: annonce._id });
+
         res.json({
             success: true,
-            message: 'Annonce supprimée avec succès'
+            message: 'Annonce et trajet associé supprimés avec succès'
         });
     } catch (error) {
         if (error.name === 'CastError') {

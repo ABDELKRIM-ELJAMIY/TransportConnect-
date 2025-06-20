@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const { errorHandler } = require('./middlewares/validation');
+const trajetsRouter = require('./routes/trajets');
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use('/api/users', require('./routes/users'));
 app.use('/api/annonces', require('./routes/annonces'));
 app.use('/api/demandes', require('./routes/demandes'));
 app.use('/api/evaluations', require('./routes/evaluations'));
+app.use('/api/trajets', trajetsRouter);
 
 app.use(errorHandler);
 

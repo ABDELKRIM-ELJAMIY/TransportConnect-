@@ -1,8 +1,9 @@
-import { Star, Home, User, Settings, Truck, Package, History, Bell, MapPin } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Star, Home, User, Settings, Truck, Package, History, Bell, MapPin, LogOut } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const SidebarConducteur = ({ isOpen, toggleSidebar }) => {
     const location = useLocation();
+    const navigate = useNavigate();
 
     const menuItems = [
         {
@@ -46,6 +47,11 @@ const SidebarConducteur = ({ isOpen, toggleSidebar }) => {
             href: "/conducteur/parametres"
         }
     ];
+
+    const handleLogout = () => {
+        localStorage.clear();
+        navigate("/login");
+    };
 
     return (
         <>
@@ -131,6 +137,15 @@ const SidebarConducteur = ({ isOpen, toggleSidebar }) => {
                     </div>
 
                     <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/50 to-transparent"></div>
+                    <div className="p-4">
+                        <button
+                            onClick={handleLogout}
+                            className="w-full flex items-center space-x-3 p-3 rounded-xl bg-gradient-to-r from-red-500 to-pink-500 text-white font-bold shadow-lg hover:from-red-600 hover:to-pink-600 transition-all duration-300 justify-center"
+                        >
+                            <LogOut size={20} className="mr-2" />
+                            <span>Déconnexion</span>
+                        </button>
+                    </div>
                 </div>
             </aside>
 

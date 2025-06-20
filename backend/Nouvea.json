@@ -1,0 +1,32 @@
+{
+  "name": "Créer Annonce Example",
+  "rules": [
+    {
+      "url": "https://yourdomain.com/creer-annonce",
+      "fields": {
+        "lieuDepart_nom": "tanougha",
+        "lieuDepart_latitude": "48.8566",
+        "lieuDepart_longitude": "2.3522",
+        "lieuDepart_adresse": "1 Place de la Concorde, Paris",
+        "destination_nom": "bm",
+        "destination_latitude": "45.7578",
+        "destination_longitude": "4.8320",
+        "destination_adresse": "Place Bellecour, Lyon",
+        "dateDepart": "2024-12-20T15:00:00.000Z",
+        "dateArrivee": "2024-12-20T21:00:00.000Z",
+        "longueurMax": "2.0",
+        "largeurMax": "1.5",
+        "hauteurMax": "1.0",
+        "poidsMaximum": "500",
+        "typeMarchandise": "normale",
+        "capaciteDisponible": "2.0",
+        "prix": "150",
+        "accepteAnimaux": "false",
+        "fumeurAccepte": "true",
+        "conditionsSpeciales": "Pas de marchandises fragiles",
+        "nombrePlacesDisponibles": "2",
+        "isUrgent": "false"
+      }
+    }
+  ]
+}

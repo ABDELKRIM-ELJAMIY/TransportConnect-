@@ -12,11 +12,14 @@ import ConducteurRatings from './pages/conducteur/ConducteurRatings';
 import NotificationsConducteur from './pages/conducteur/NotificationsConducteur';
 import ProfilConducteur from './pages/conducteur/ProfilConducteur';
 import MesTrajets from './pages/conducteur/MesTrajets';
+import EditAnnonce from './pages/conducteur/EditAnnonce';
+import { Toaster } from 'react-hot-toast';
 // import Navbar from './components/Navbar';
 
 function App() {
   return (
     <>
+      <Toaster position="top-right" reverseOrder={false} />
       {/* <Navbar /> */}
       <Routes>
         <Route path="/" element={<HomePage />} />
@@ -30,6 +33,7 @@ function App() {
         <Route path="/conducteur/notifications" element={<NotificationsConducteur />} />
         <Route path="/conducteur/profil" element={<ProfilConducteur />} />
         <Route path="/conducteur/Trajets" element={<MesTrajets />} />
+        <Route path="/conducteur/edit-annonce/:id" element={<EditAnnonce />} />
 
 
 

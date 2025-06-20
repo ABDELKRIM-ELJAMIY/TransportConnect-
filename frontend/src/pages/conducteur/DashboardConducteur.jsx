@@ -41,24 +41,24 @@ const Dashboard = () => {
     const fetchMyAnnonces = async () => {
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.get('http://localhost:5000/api/annonces/mine', {
+            const response = await axios.get('http://localhost:5000/api/annonces/mine?page=1&limit=10', {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            const annonces = response.data;
-            setRecentTrips(annonces.slice(0, 3).map(annonce => ({
+            const annonces = response.data.data.annonces;
+            setRecentTrips(annonces.map(annonce => ({
                 id: annonce._id,
                 from: annonce.lieuDepart?.nom || 'N/A',
                 to: annonce.destination?.nom || 'N/A',
                 date: new Date(annonce.dateDepart).toLocaleDateString('fr-FR'),
-                status: annonce.status || 'Active',
+                statut: annonce.statut || 'active',
                 cargo: annonce.typeMarchandise || 'N/A',
                 rating: annonce.rating || null
             })));
 
             // Calculate stats
             const totalTrips = annonces.length;
-            const completedDeliveries = annonces.filter(a => a.status === 'completed').length;
+            const completedDeliveries = annonces.filter(a => a.statut === 'complete').length;
 
             setStats(prev => ({
                 ...prev,
@@ -348,11 +348,11 @@ const Dashboard = () => {
                                                     </div>
                                                 </div>
                                                 <div className="text-right">
-                                                    <span className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-300 ${trip.status === 'Completed'
+                                                    <span className={`px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-300 ${trip.statut === 'complete'
                                                         ? 'bg-green-100 text-green-800 group-hover:bg-green-200'
                                                         : 'bg-blue-100 text-blue-800 group-hover:bg-blue-200'
                                                         }`}>
-                                                        {trip.status}
+                                                        {trip.statut}
                                                     </span>
                                                     {trip.rating && (
                                                         <div className="flex items-center mt-2 justify-end">
@@ -464,7 +464,7 @@ const Dashboard = () => {
                                 </div>
                             </Link>
 
-                            <Link to="/conducteur/MyAnnonces" className="block group">
+                            <Link to="/conducteur/MesAnnonce" className="block group">
                                 <div className="relative p-6 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl hover:from-green-600 hover:to-green-700 hover:shadow-xl transform hover:scale-105 hover:-translate-y-2 transition-all duration-300 text-center overflow-hidden">
                                     <div className="absolute top-0 right-0 w-20 h-20 bg-white/10 rounded-full -translate-y-10 translate-x-10"></div>
                                     <div className="absolute bottom-0 left-0 w-16 h-16 bg-white/5 rounded-full translate-y-8 -translate-x-8"></div>

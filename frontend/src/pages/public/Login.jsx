@@ -28,6 +28,12 @@ const Login = () => {
             }
 
             localStorage.setItem('token', result.token);
+            if (result.user) {
+                localStorage.setItem('userData', JSON.stringify(result.user));
+                if (result.user.role) {
+                    localStorage.setItem('userRole', result.user.role);
+                }
+            }
             toast.success("Connexion réussie");
 
             if (result.user?.role === 'admin') {

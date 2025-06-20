@@ -1,45 +1,60 @@
 // src/pages/conducteur/MesTrajets.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Menu, Truck, MapPin, Calendar, Clock, Package, User, Phone, Mail, Navigation, CheckCircle, Edit, Eye } from "lucide-react";
 import Sidebar from "../../components/conducteur/SidebarConducteur";
+import axios from "axios";
+import { toast } from 'react-hot-toast';
 
 const MesTrajets = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState("all");
     const [selectedTrip, setSelectedTrip] = useState(null);
+    const [annonces, setAnnonces] = useState([]);
+    const [trajetsByAnnonce, setTrajetsByAnnonce] = useState({});
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const toggleSidebar = () => {
         setSidebarOpen(prev => !prev);
     };
 
-    const trips = [
-        {
-            id: 1,
-            from: "Casablanca",
-            to: "Rabat",
-            date: "2025-06-18",
-            time: "08:00",
-            status: "en_cours",
-            cargo: "Électronique",
-            weight: "500 kg",
-            customer: "Fatima Zahra",
-            price: 1200,
-            distance: "95 km"
-        },
-        {
-            id: 2,
-            from: "Rabat",
-            to: "Fès",
-            date: "2025-06-19",
-            time: "10:00",
-            status: "confirme",
-            cargo: "Textile",
-            weight: "300 kg",
-            customer: "Youssef El Amrani",
-            price: 800,
-            distance: "200 km"
-        }
-    ];
+    useEffect(() => {
+        const fetchAnnoncesAndTrajets = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:5000/api/annonces/mine?page=1&limit=100', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const annoncesData = (response.data.data?.annonces || response.data.annonces || []);
+                setAnnonces(annoncesData);
+                // Fetch trajets for each annonce
+                const trajetResults = await Promise.all(
+                    annoncesData.map(async (annonce) => {
+                        try {
+                            const trajetRes = await axios.get(`http://localhost:5000/api/trajets/annonce/${annonce._id}`, {
+                                headers: { Authorization: `Bearer ${token}` }
+                            });
+                            return { annonceId: annonce._id, trajet: trajetRes.data.data };
+                        } catch (err) {
+                            return { annonceId: annonce._id, trajet: null };
+                        }
+                    })
+                );
+                const trajetsMap = {};
+                trajetResults.forEach(({ annonceId, trajet }) => {
+                    trajetsMap[annonceId] = trajet;
+                });
+                setTrajetsByAnnonce(trajetsMap);
+            } catch (err) {
+                setError('Erreur lors du chargement des annonces ou trajets.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchAnnoncesAndTrajets();
+    }, []);
 
     const filters = [
         { value: "all", label: "Tous", icon: Truck },
@@ -83,9 +98,52 @@ const MesTrajets = () => {
         }
     };
 
-    const filteredTrips = trips.filter(trip =>
-        selectedFilter === "all" || trip.status === selectedFilter
-    );
+    const filteredTrips = annonces.map(annonce => ({
+        id: annonce._id,
+        from: annonce.lieuDepart?.nom || '',
+        to: annonce.destination?.nom || '',
+        date: annonce.dateDepart ? new Date(annonce.dateDepart).toLocaleDateString('fr-FR') : '',
+        time: annonce.dateDepart ? new Date(annonce.dateDepart).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) : '',
+        status: annonce.statut || 'active',
+        cargo: annonce.typeMarchandise || '',
+        weight: annonce.poidsMaximum ? `${annonce.poidsMaximum} kg` : '',
+        customer: annonce.conducteurId?.nom ? `${annonce.conducteurId.prenom} ${annonce.conducteurId.nom}` : '',
+        price: annonce.prix || '',
+        distance: '', // You can calculate or add this if available
+        raw: annonce // keep the full annonce for modal/details if needed
+    }));
+
+    const handleTrajetAction = async (annonceId, action) => {
+        try {
+            const token = localStorage.getItem('token');
+            // 1. Get the trajet by annonceId
+            const trajetRes = await axios.get(`http://localhost:5000/api/trajets/annonce/${annonceId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const trajetId = trajetRes.data.data._id;
+            // 2. Call the action on the trajet
+            let url = `http://localhost:5000/api/trajets/${trajetId}`;
+            let method = 'post';
+            if (action === 'suivre') {
+                url += '/suivre';
+                method = 'get';
+            } else {
+                url += `/${action}`;
+            }
+            const response = await axios({
+                url,
+                method,
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            if (action === 'suivre') {
+                toast.success('Position récupérée!');
+            } else {
+                toast.success(response.data.message || 'Action réussie!');
+            }
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Erreur lors de l\'action');
+        }
+    };
 
     const TripDetailsModal = ({ trip, onClose }) => {
         if (!trip) return null;
@@ -182,32 +240,34 @@ const MesTrajets = () => {
                         </div>
 
                         <div className="flex space-x-3 pt-4 border-t border-gray-200">
-                            {trip.status === "en_attente" && (
-                                <>
-                                    <button className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                                        Accepter
-                                    </button>
-                                    <button className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">
-                                        Refuser
-                                    </button>
-                                </>
-                            )}
-                            {trip.status === "confirme" && (
-                                <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
-                                    Commencer le Trajet
-                                </button>
-                            )}
-                            {trip.status === "en_cours" && (
-                                <button className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors">
-                                    Terminer le Trajet
-                                </button>
-                            )}
+                            <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors" onClick={() => handleTrajetAction(trip.raw._id, 'commencer')}>
+                                Commencer
+                            </button>
+                            <button className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors" onClick={() => handleTrajetAction(trip.raw._id, 'terminer')}>
+                                Terminer
+                            </button>
+                            <button className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors" onClick={() => handleTrajetAction(trip.raw._id, 'annuler')}>
+                                Annuler
+                            </button>
+                            <button className="flex-1 bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors" onClick={() => handleTrajetAction(trip.raw._id, 'suivre')}>
+                                Suivre
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
         );
     };
+
+    if (loading) {
+        return <div className="text-center py-10 text-gray-500">Chargement des trajets...</div>;
+    }
+    if (error) {
+        return <div className="text-center py-10 text-red-500">{error}</div>;
+    }
+    if (annonces.length === 0) {
+        return <div className="text-center py-10 text-gray-400">Aucun trajet disponible.</div>;
+    }
 
     return (
         <div className="flex min-h-screen bg-gray-50">
@@ -242,7 +302,7 @@ const MesTrajets = () => {
                     <div className="flex justify-between items-center mb-6">
                         <h1 className="text-2xl font-bold text-gray-800">Mes Trajets</h1>
                         <div className="text-sm text-gray-600">
-                            {filteredTrips.length} trajet{filteredTrips.length > 1 ? 's' : ''} trouvé{filteredTrips.length > 1 ? 's' : ''}
+                            {annonces.length} trajet{annonces.length > 1 ? 's' : ''} trouvé{annonces.length > 1 ? 's' : ''}
                         </div>
                     </div>
 
@@ -254,8 +314,8 @@ const MesTrajets = () => {
                                     key={filter.value}
                                     onClick={() => setSelectedFilter(filter.value)}
                                     className={`flex items-center space-x-2 px-4 py-2 rounded-lg whitespace-nowrap transition-all duration-300 ${selectedFilter === filter.value
-                                            ? "bg-blue-600 text-white"
-                                            : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
                                         }`}
                                 >
                                     <Icon size={16} />
@@ -266,79 +326,43 @@ const MesTrajets = () => {
                     </div>
 
                     <div className="space-y-4">
-                        {filteredTrips.map((trip) => (
-                            <div key={trip.id} className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 hover:shadow-lg transition-shadow">
-                                <div className="flex items-start justify-between">
-                                    <div className="flex-1">
-                                        <div className="flex items-center justify-between mb-4">
-                                            <div className="flex items-center space-x-4">
-                                                <div className="flex items-center text-gray-800 font-semibold">
-                                                    <MapPin className="mr-2 text-blue-600" size={20} />
-                                                    {trip.from} → {trip.to}
-                                                </div>
-                                                <span className={`text-sm px-2 py-1 rounded-full font-medium ${getStatusColor(trip.status)}`}>
-                                                    {getStatusText(trip.status)}
-                                                </span>
-                                            </div>
-                                            <div className="text-right">
-                                                <div className="text-lg font-bold text-green-600">{trip.price} MAD</div>
-                                                <div className="text-sm text-gray-500">{trip.distance}</div>
-                                            </div>
+                        {annonces.map((annonce) => {
+                            const trajet = trajetsByAnnonce[annonce._id];
+                            return (
+                                <div key={annonce._id} className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 hover:shadow-lg transition-shadow">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <div className="flex items-center text-gray-800 font-semibold">
+                                            <MapPin className="mr-2 text-blue-600" size={20} />
+                                            {(annonce.lieuDepart?.nom || annonce.lieuDepart) + ' → ' + (annonce.destination?.nom || annonce.destination)}
                                         </div>
-
-                                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600 mb-4">
-                                            <div className="flex items-center">
-                                                <Calendar className="mr-2 text-gray-500" size={16} />
-                                                {trip.date}
-                                            </div>
-                                            <div className="flex items-center">
-                                                <Clock className="mr-2 text-gray-500" size={16} />
-                                                {trip.time}
-                                            </div>
-                                            <div className="flex items-center">
-                                                <Package className="mr-2 text-gray-500" size={16} />
-                                                {trip.cargo}
-                                            </div>
-                                            <div className="flex items-center">
-                                                <Truck className="mr-2 text-gray-500" size={16} />
-                                                {trip.weight}
-                                            </div>
-                                        </div>
-
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center space-x-2">
-                                                <User className="text-gray-400" size={16} />
-                                                <span className="text-sm text-gray-600">{trip.customer}</span>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <button
-                                                    onClick={() => setSelectedTrip(trip)}
-                                                    className="flex items-center space-x-2 px-3 py-1 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                                                >
-                                                    <Eye size={16} />
-                                                    <span className="text-sm">Détails</span>
-                                                </button>
-                                                {trip.status === "en_attente" && (
-                                                    <button className="flex items-center space-x-2 px-3 py-1 text-green-600 hover:bg-green-50 rounded-lg transition-colors">
-                                                        <Edit size={16} />
-                                                        <span className="text-sm">Modifier</span>
-                                                    </button>
-                                                )}
-                                            </div>
-                                        </div>
+                                        <span className="text-sm px-2 py-1 rounded-full font-medium bg-gray-100 text-gray-700">
+                                            {annonce.statut}
+                                        </span>
                                     </div>
+                                    <div className="mb-2 text-sm text-gray-600">
+                                        Départ: {annonce.dateDepart ? new Date(annonce.dateDepart).toLocaleDateString('fr-FR') : ''}<br />
+                                        Arrivée: {annonce.dateArrivee ? new Date(annonce.dateArrivee).toLocaleDateString('fr-FR') : ''}<br />
+                                        Marchandise: {annonce.typeMarchandise}<br />
+                                        Poids max: {annonce.poidsMaximum} kg<br />
+                                        Prix: {annonce.prix} MAD
+                                    </div>
+                                    {trajet ? (
+                                        <div className="mt-2">
+                                            <div className="text-green-700 font-semibold mb-2">Trajet: {trajet.statut}</div>
+                                            <div className="flex space-x-2">
+                                                <button className="bg-blue-600 text-white px-3 py-1 rounded" onClick={() => handleTrajetAction(annonce._id, 'commencer')}>Commencer</button>
+                                                <button className="bg-green-600 text-white px-3 py-1 rounded" onClick={() => handleTrajetAction(annonce._id, 'terminer')}>Terminer</button>
+                                                <button className="bg-red-600 text-white px-3 py-1 rounded" onClick={() => handleTrajetAction(annonce._id, 'annuler')}>Annuler</button>
+                                                <button className="bg-gray-600 text-white px-3 py-1 rounded" onClick={() => handleTrajetAction(annonce._id, 'suivre')}>Suivre</button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-yellow-600 font-semibold mt-2">Trajet non démarré</div>
+                                    )}
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
-
-                    {filteredTrips.length === 0 && (
-                        <div className="text-center py-12">
-                            <Truck className="mx-auto text-gray-400 mb-4" size={48} />
-                            <h3 className="text-lg font-medium text-gray-600 mb-2">Aucun trajet trouvé</h3>
-                            <p className="text-gray-500">Aucun trajet ne correspond à vos filtres</p>
-                        </div>
-                    )}
                 </div>
             </main>
 
