@@ -87,18 +87,23 @@ const Dashboard = () => {
                         headers: { Authorization: `Bearer ${token}` }
                     });
 
-                    const requests = response.data.filter(req => req.status === 'pending');
-                    activeRequestsCount += requests.length;
+                    // Check if response has success property and data structure
+                    const demandes = response.data.success ? response.data.data.demandes : response.data;
 
-                    allRequests.push(...requests.map(req => ({
-                        id: req._id,
-                        shipper: req.expediteur?.prenom + ' ' + req.expediteur?.nom || 'N/A',
+                    // Filter for pending requests (en_attente status)
+                    const pendingDemandes = demandes.filter(demande => demande.statut === 'en_attente');
+                    activeRequestsCount += pendingDemandes.length;
+
+                    allRequests.push(...pendingDemandes.map(demande => ({
+                        id: demande._id,
+                        shipper: `${demande.expediteurId?.prenom || ''} ${demande.expediteurId?.nom || ''}`.trim() || 'N/A',
                         from: annonce.lieuDepart?.nom || 'N/A',
                         to: annonce.destination?.nom || 'N/A',
-                        cargo: req.typeMarchandise || 'N/A',
-                        weight: req.poids + ' kg' || 'N/A',
-                        requestDate: new Date(req.dateCreation).toLocaleDateString('fr-FR'),
-                        annonceId: annonce._id
+                        cargo: demande.typeColis || 'N/A',
+                        weight: `${demande.poids || 0} kg`,
+                        requestDate: new Date(demande.createdAt).toLocaleDateString('fr-FR'),
+                        annonceId: annonce._id,
+                        description: demande.description || 'N/A'
                     })));
                 } catch (error) {
                     console.error(`Error fetching requests for annonce ${annonce._id}:`, error);
@@ -146,11 +151,11 @@ const Dashboard = () => {
         try {
             const token = localStorage.getItem('token');
             await axios.patch(`http://localhost:5000/api/demandes/${requestId}/status`,
-                { status },
+                { statut: status },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
 
-            toast.success(`Demande ${status === 'accepted' ? 'acceptée' : 'refusée'} avec succès`);
+            toast.success(`Demande ${status === 'acceptee' ? 'acceptée' : 'refusée'} avec succès`);
 
             // Refresh data
             await fetchMyAnnonces();
@@ -184,7 +189,7 @@ const Dashboard = () => {
     if (loading) {
         return (
             <div className="flex min-h-screen bg-gray-50">
-                <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+                <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} userData={user} />
                 <main className={`flex-1 min-h-screen bg-gray-50 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-0"}`}>
                     <div className="flex items-center justify-center h-screen">
                         <div className="text-center">
@@ -199,7 +204,7 @@ const Dashboard = () => {
 
     return (
         <div className="flex min-h-screen bg-gray-50">
-            <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+            <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} userData={user} />
 
             <main
                 className={`flex-1 min-h-screen bg-gray-50 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-0"
@@ -420,13 +425,13 @@ const Dashboard = () => {
                                                 </div>
                                                 <div className="flex space-x-3">
                                                     <button
-                                                        onClick={() => handleRequestStatus(request.id, 'accepted')}
+                                                        onClick={() => handleRequestStatus(request.id, 'acceptee')}
                                                         className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-semibold rounded-xl hover:from-green-600 hover:to-green-700 hover:shadow-lg transform hover:scale-105 transition-all duration-300"
                                                     >
                                                         Accepter
                                                     </button>
                                                     <button
-                                                        onClick={() => handleRequestStatus(request.id, 'rejected')}
+                                                        onClick={() => handleRequestStatus(request.id, 'refusee')}
                                                         className="flex-1 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white text-sm font-semibold rounded-xl hover:from-red-600 hover:to-red-700 hover:shadow-lg transform hover:scale-105 transition-all duration-300"
                                                     >
                                                         Refuser

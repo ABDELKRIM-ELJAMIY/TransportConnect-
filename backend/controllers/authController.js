@@ -74,6 +74,7 @@ exports.getMe = async (req, res) => {
                 email: user.email,
                 telephone: user.telephone,
                 role: user.role,
+                profileImage: user.profileImage,
                 dateCreation: user.dateCreation,
                 isActive: user.isActive
             }

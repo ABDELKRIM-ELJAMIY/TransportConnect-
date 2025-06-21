@@ -3,6 +3,7 @@ import { Lock, Mail, Eye, EyeOff, Truck, Star } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
+import { redirectToDashboard } from '../../utils/roleNavigation';
 
 const Login = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -29,18 +30,15 @@ const Login = () => {
 
             localStorage.setItem('token', result.token);
             if (result.user) {
-                localStorage.setItem('userData', JSON.stringify(result.user));
+                localStorage.setItem('user', JSON.stringify(result.user));
                 if (result.user.role) {
                     localStorage.setItem('userRole', result.user.role);
                 }
             }
             toast.success("Connexion réussie");
 
-            if (result.user?.role === 'admin') {
-                navigate('/admin');
-            } else {
-                navigate('/conducteur/dashboard');
-            }
+            // Use utility function for role-based navigation
+            redirectToDashboard(navigate, result.user?.role);
         } catch (error) {
             toast.error(error.message || 'Erreur');
         } finally {

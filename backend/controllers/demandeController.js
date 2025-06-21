@@ -7,10 +7,6 @@ exports.createDemande = async (req, res) => {
         const {
             annonceId,
             description,
-            dimensions,
-            poids,
-            typeColis,
-            valeurDeclaree,
             assuranceRequise,
             instructionsSpeciales,
             lieuRecuperation,
@@ -63,28 +59,15 @@ exports.createDemande = async (req, res) => {
             });
         }
 
-        if (poids > annonce.poidsMaximum) {
-            return res.status(400).json({
-                success: false,
-                message: 'Le poids de votre colis dépasse la capacité maximale de cette annonce'
-            });
-        }
-
-        if (!annonce.dimensions || !annonce.dimensions.longueurMax || !annonce.dimensions.largeurMax || !annonce.dimensions.hauteurMax) {
-            return res.status(400).json({
-                success: false,
-                message: 'Les dimensions maximales de cette annonce ne sont pas définies'
-            });
-        }
-
-        if (dimensions.longueur > annonce.dimensions.longueurMax ||
-            dimensions.largeur > annonce.dimensions.largeurMax ||
-            dimensions.hauteur > annonce.dimensions.hauteurMax) {
-            return res.status(400).json({
-                success: false,
-                message: 'Les dimensions de votre colis dépassent les limites de cette annonce'
-            });
-        }
+        // Use annonce data for package details
+        const dimensions = {
+            longueur: annonce.dimensions?.longueurMax || 0,
+            largeur: annonce.dimensions?.largeurMax || 0,
+            hauteur: annonce.dimensions?.hauteurMax || 0
+        };
+        const poids = annonce.poidsMaximum || 0;
+        const typeColis = annonce.typeMarchandise || 'normale';
+        const valeurDeclaree = 0; // Default value since annonce doesn't have this
 
         const newDemande = new DemandeTransport({
             expediteurId: req.user.id,
@@ -94,7 +77,7 @@ exports.createDemande = async (req, res) => {
             poids,
             typeColis,
             valeurDeclaree,
-            assuranceRequise,
+            assuranceRequise: assuranceRequise || false,
             instructionsSpeciales,
             lieuRecuperation,
             lieuLivraison,
@@ -175,6 +158,9 @@ exports.getDemandesByAnnonce = async (req, res) => {
         const limit = parseInt(req.query.limit) || 10;
         const skip = (page - 1) * limit;
 
+        console.log('getDemandesByAnnonce - annonceId:', annonceId);
+        console.log('getDemandesByAnnonce - req.user:', req.user);
+
         const annonce = await Annonce.findById(annonceId);
         if (!annonce) {
             return res.status(404).json({
@@ -183,7 +169,21 @@ exports.getDemandesByAnnonce = async (req, res) => {
             });
         }
 
-        if (annonce.conducteurId.toString() !== req.user.id && req.user.role !== 'admin') {
+        console.log('getDemandesByAnnonce - annonce.conducteurId:', annonce.conducteurId);
+        console.log('getDemandesByAnnonce - req.user.id:', req.user.id);
+        console.log('getDemandesByAnnonce - conducteurId type:', typeof annonce.conducteurId);
+        console.log('getDemandesByAnnonce - req.user.id type:', typeof req.user.id);
+        console.log('getDemandesByAnnonce - conducteurId toString:', annonce.conducteurId.toString());
+        console.log('getDemandesByAnnonce - req.user.id toString:', req.user.id.toString());
+
+        // Check if user is the conducteur of this annonce or an admin
+        const isConducteur = annonce.conducteurId.toString() === req.user.id.toString();
+        const isAdmin = req.user.role === 'admin';
+
+        console.log('getDemandesByAnnonce - isConducteur:', isConducteur);
+        console.log('getDemandesByAnnonce - isAdmin:', isAdmin);
+
+        if (!isConducteur && !isAdmin) {
             return res.status(403).json({
                 success: false,
                 message: 'Vous n\'êtes pas autorisé à voir les demandes de cette annonce'
@@ -219,6 +219,8 @@ exports.getDemandesByAnnonce = async (req, res) => {
             }
         });
     } catch (error) {
+        console.error('getDemandesByAnnonce error:', error);
+
         if (error.name === 'CastError') {
             return res.status(400).json({
                 success: false,
@@ -239,6 +241,9 @@ exports.updateDemandeStatus = async (req, res) => {
         const { statut, commentaire, raisonRefus } = req.body;
         const demandeId = req.params.id;
 
+        console.log('updateDemandeStatus - demandeId:', demandeId);
+        console.log('updateDemandeStatus - req.user:', req.user);
+
         const demande = await DemandeTransport.findById(demandeId)
             .populate('annonceId');
 
@@ -257,7 +262,21 @@ exports.updateDemandeStatus = async (req, res) => {
             });
         }
 
-        if (annonce.conducteurId.toString() !== req.user.id && req.user.role !== 'admin') {
+        console.log('updateDemandeStatus - annonce.conducteurId:', annonce.conducteurId);
+        console.log('updateDemandeStatus - req.user.id:', req.user.id);
+        console.log('updateDemandeStatus - conducteurId type:', typeof annonce.conducteurId);
+        console.log('updateDemandeStatus - req.user.id type:', typeof req.user.id);
+        console.log('updateDemandeStatus - conducteurId toString:', annonce.conducteurId.toString());
+        console.log('updateDemandeStatus - req.user.id toString:', req.user.id.toString());
+
+        // Check if user is the conducteur of this annonce or an admin
+        const isConducteur = annonce.conducteurId.toString() === req.user.id.toString();
+        const isAdmin = req.user.role === 'admin';
+
+        console.log('updateDemandeStatus - isConducteur:', isConducteur);
+        console.log('updateDemandeStatus - isAdmin:', isAdmin);
+
+        if (!isConducteur && !isAdmin) {
             return res.status(403).json({
                 success: false,
                 message: 'Vous n\'êtes pas autorisé à modifier cette demande'
@@ -306,6 +325,8 @@ exports.updateDemandeStatus = async (req, res) => {
             data: demande
         });
     } catch (error) {
+        console.error('updateDemandeStatus error:', error);
+
         if (error.name === 'CastError') {
             return res.status(400).json({
                 success: false,
@@ -368,4 +389,120 @@ exports.deleteDemande = async (req, res) => {
             error: error.message
         });
     }
-}; 
+};
+
+exports.getMyDemandesAsConducteur = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        console.log('getMyDemandesAsConducteur - req.user:', req.user);
+
+        // First, get all annonces created by this conducteur
+        const annonces = await Annonce.find({ conducteurId: req.user.id }).select('_id');
+        const annonceIds = annonces.map(annonce => annonce._id);
+
+        console.log('getMyDemandesAsConducteur - annonceIds:', annonceIds);
+
+        if (annonceIds.length === 0) {
+            return res.json({
+                success: true,
+                data: {
+                    demandes: [],
+                    pagination: {
+                        page,
+                        limit,
+                        total: 0,
+                        pages: 0
+                    }
+                }
+            });
+        }
+
+        const filter = { annonceId: { $in: annonceIds } };
+
+        if (req.query.statut) filter.statut = req.query.statut;
+        if (req.query.typeColis) filter.typeColis = req.query.typeColis;
+
+        // Exclude demandes that are completed (livree or refusee) - they go to historique
+        filter.statut = { $nin: ['livree', 'refusee'] };
+
+        console.log('getMyDemandesAsConducteur - filter:', JSON.stringify(filter, null, 2));
+
+        const demandes = await DemandeTransport.find(filter)
+            .populate([
+                { path: 'expediteurId', select: 'nom prenom email telephone' },
+                { path: 'annonceId', populate: { path: 'conducteurId', select: 'nom prenom email telephone' } }
+            ])
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+
+        console.log('getMyDemandesAsConducteur - found demandes:', demandes.length);
+        console.log('getMyDemandesAsConducteur - demandes statuts:', demandes.map(d => ({ id: d._id, statut: d.statut, inHistorique: d.inHistorique })));
+
+        const total = await DemandeTransport.countDocuments(filter);
+
+        res.json({
+            success: true,
+            data: {
+                demandes,
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    pages: Math.ceil(total / limit)
+                }
+            }
+        });
+    } catch (error) {
+        console.error('getMyDemandesAsConducteur error:', error);
+
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la récupération des demandes',
+            error: error.message
+        });
+    }
+};
+
+exports.migrateHistoriqueDemandes = async (req, res) => {
+    try {
+        console.log('Starting migration of historique demandes...');
+
+        // Find all demandes that are livree or refusee but don't have inHistorique flag
+        const demandesToMigrate = await DemandeTransport.find({
+            statut: { $in: ['livree', 'refusee'] },
+            inHistorique: { $ne: true }
+        });
+
+        console.log(`Found ${demandesToMigrate.length} demandes to migrate`);
+
+        let updatedCount = 0;
+        for (const demande of demandesToMigrate) {
+            demande.inHistorique = true;
+            demande.dateFin = demande.dateReponse || demande.updatedAt || demande.createdAt;
+            await demande.save();
+            updatedCount++;
+        }
+
+        console.log(`Successfully migrated ${updatedCount} demandes to historique`);
+
+        res.json({
+            success: true,
+            message: `Migration terminée. ${updatedCount} demandes déplacées vers l'historique.`,
+            data: {
+                totalFound: demandesToMigrate.length,
+                updated: updatedCount
+            }
+        });
+    } catch (error) {
+        console.error('Migration error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la migration',
+            error: error.message
+        });
+    }
+};

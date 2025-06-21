@@ -14,7 +14,12 @@ const evaluationSchema = new mongoose.Schema({
     trajetId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Trajet',
-        required: true
+        required: false
+    },
+    annonceId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Annonce',
+        required: false
     },
     note: {
         type: Number,
@@ -35,8 +40,8 @@ const evaluationSchema = new mongoose.Schema({
         ponctualite: { type: Number, min: 1, max: 5 },
         communication: { type: Number, min: 1, max: 5 },
         professionnalisme: { type: Number, min: 1, max: 5 },
-        etatColis: { type: Number, min: 1, max: 5 }, 
-        faciliteContact: { type: Number, min: 1, max: 5 }, 
+        etatColis: { type: Number, min: 1, max: 5 },
+        faciliteContact: { type: Number, min: 1, max: 5 },
         respectConsignes: { type: Number, min: 1, max: 5 }
     },
     recommande: {
@@ -63,11 +68,25 @@ evaluationSchema.index({
     evalueId: 1,
     trajetId: 1,
     type: 1
-}, { unique: true });
+}, {
+    unique: true,
+    partialFilterExpression: { trajetId: { $exists: true } }
+});
+
+evaluationSchema.index({
+    evaluateurId: 1,
+    evalueId: 1,
+    annonceId: 1,
+    type: 1
+}, {
+    unique: true,
+    partialFilterExpression: { annonceId: { $exists: true } }
+});
 
 evaluationSchema.index({ evalueId: 1 });
 evaluationSchema.index({ evaluateurId: 1 });
 evaluationSchema.index({ trajetId: 1 });
+evaluationSchema.index({ annonceId: 1 });
 evaluationSchema.index({ note: -1 });
 evaluationSchema.index({ createdAt: -1 });
 

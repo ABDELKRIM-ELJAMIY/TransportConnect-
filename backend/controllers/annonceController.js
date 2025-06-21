@@ -264,6 +264,50 @@ exports.deleteAnnonce = async (req, res) => {
     }
 };
 
+exports.completeAnnonce = async (req, res) => {
+    try {
+        const annonce = await Annonce.findById(req.params.id);
+
+        if (!annonce) {
+            return res.status(404).json({
+                success: false,
+                message: 'Annonce non trouvée'
+            });
+        }
+
+        if (annonce.conducteurId.toString() !== req.user.id.toString() && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Vous n\'êtes pas autorisé à modifier cette annonce'
+            });
+        }
+
+        if (annonce.statut !== 'active') {
+            return res.status(400).json({
+                success: false,
+                message: `Impossible de marquer comme terminée une annonce qui est déjà ${annonce.statut}`
+            });
+        }
+
+        annonce.statut = 'complete';
+        annonce.dateArrivee = new Date(); // Set arrival date on completion
+        await annonce.save();
+
+        res.json({
+            success: true,
+            message: 'Annonce marquée comme terminée avec succès',
+            data: annonce
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Erreur lors de la finalisation de l\'annonce',
+            error: error.message
+        });
+    }
+};
+
 exports.getMyAnnonces = async (req, res) => {
     try {
         const page = parseInt(req.query.page) || 1;

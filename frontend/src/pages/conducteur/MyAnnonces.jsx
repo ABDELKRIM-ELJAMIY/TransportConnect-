@@ -11,9 +11,23 @@ const MyAnnonces = () => {
     const [annonces, setAnnonces] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [userData, setUserData] = useState(null);
 
     const toggleSidebar = () => {
         setSidebarOpen(prev => !prev);
+    };
+
+    // Fetch user data
+    const fetchUserData = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:5000/api/auth/me', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUserData(response.data.user);
+        } catch (err) {
+            console.error("Error fetching user data:", err);
+        }
     };
 
     useEffect(() => {
@@ -35,6 +49,8 @@ const MyAnnonces = () => {
                 setLoading(false);
             }
         };
+
+        fetchUserData();
         fetchAnnonces();
     }, []);
 
@@ -56,7 +72,7 @@ const MyAnnonces = () => {
 
     return (
         <div className="flex min-h-screen bg-gray-50">
-            <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+            <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} userData={userData} />
 
             <main
                 className={`flex-1 min-h-screen bg-gray-50 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-0"

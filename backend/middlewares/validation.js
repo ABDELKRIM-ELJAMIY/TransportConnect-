@@ -401,31 +401,6 @@ const validateDemande = [
         .isLength({ min: 10, max: 1000 })
         .withMessage('La description doit contenir entre 10 et 1000 caractères'),
 
-    body('dimensions.longueur')
-        .isFloat({ min: 0.1, max: 100 })
-        .withMessage('La longueur doit être entre 0.1 et 100 mètres'),
-
-    body('dimensions.largeur')
-        .isFloat({ min: 0.1, max: 100 })
-        .withMessage('La largeur doit être entre 0.1 et 100 mètres'),
-
-    body('dimensions.hauteur')
-        .isFloat({ min: 0.1, max: 100 })
-        .withMessage('La hauteur doit être entre 0.1 et 100 mètres'),
-
-    body('poids')
-        .isFloat({ min: 0.1, max: 50000 })
-        .withMessage('Le poids doit être entre 0.1 et 50000 kg'),
-
-    body('typeColis')
-        .isIn(['fragile', 'normale', 'dangereuse', 'alimentaire', 'electronique', 'autre'])
-        .withMessage('Type de colis invalide'),
-
-    body('valeurDeclaree')
-        .optional()
-        .isFloat({ min: 0 })
-        .withMessage('La valeur déclarée doit être positive'),
-
     body('assuranceRequise')
         .optional()
         .isBoolean()

@@ -1,0 +1,750 @@
+[
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Casablanca",
+            "latitude": 33.5731,
+            "longitude": -7.5898,
+            "adresse": "Centre-ville, Casablanca"
+        },
+        "destination": {
+            "nom": "Rabat",
+            "latitude": 34.0209,
+            "longitude": -6.8416,
+            "adresse": "Centre-ville, Rabat"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Mohammedia",
+                "latitude": 33.6861,
+                "longitude": -7.38298,
+                "adresse": "Gare Mohammedia",
+                "ordre": 1
+            },
+            {
+                "nom": "Temara",
+                "latitude": 33.9274,
+                "longitude": -6.9063,
+                "adresse": "Centre Temara",
+                "ordre": 2
+            }
+        ],
+        "dateDepart": "2025-06-01T09:00:00.000Z",
+        "dateArrivee": "2025-06-01T12:00:00.000Z",
+        "dimensions": {
+            "longueurMax": 2.5,
+            "largeurMax": 1.5,
+            "hauteurMax": 1.2
+        },
+        "poidsMaximum": 500,
+        "typeMarchandise": "normale",
+        "capaciteDisponible": 3,
+        "prix": 400,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": true,
+            "fumeurAccepte": false,
+            "conditionsSpeciales": "Manipuler avec soin"
+        },
+        "nombrePlacesDisponibles": 2,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Marrakech",
+            "latitude": 31.6295,
+            "longitude": -7.9811,
+            "adresse": "Médina, Marrakech"
+        },
+        "destination": {
+            "nom": "Agadir",
+            "latitude": 30.4278,
+            "longitude": -9.5981,
+            "adresse": "Centre-ville, Agadir"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Essaouira",
+                "latitude": 31.5085,
+                "longitude": -9.7595,
+                "adresse": "Port d'Essaouira",
+                "ordre": 1
+            }
+        ],
+        "dateDepart": "2025-06-02T08:00:00.000Z",
+        "dateArrivee": "2025-06-02T14:00:00.000Z",
+        "dimensions": {
+            "longueurMax": 3.0,
+            "largeurMax": 2.0,
+            "hauteurMax": 1.5
+        },
+        "poidsMaximum": 800,
+        "typeMarchandise": "fragile",
+        "capaciteDisponible": 2,
+        "prix": 600,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": false,
+            "fumeurAccepte": true,
+            "conditionsSpeciales": "Transport réfrigéré disponible"
+        },
+        "nombrePlacesDisponibles": 3,
+        "isUrgent": true,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Fès",
+            "latitude": 34.0181,
+            "longitude": -5.0078,
+            "adresse": "Médina, Fès"
+        },
+        "destination": {
+            "nom": "Tanger",
+            "latitude": 35.7595,
+            "longitude": -5.8340,
+            "adresse": "Port de Tanger"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Meknès",
+                "latitude": 33.8935,
+                "longitude": -5.5473,
+                "adresse": "Centre historique, Meknès",
+                "ordre": 1
+            },
+            {
+                "nom": "Tétouan",
+                "latitude": 35.5711,
+                "longitude": -5.3697,
+                "adresse": "Place Hassan II, Tétouan",
+                "ordre": 2
+            }
+        ],
+        "dateDepart": "2025-06-03T07:30:00.000Z",
+        "dateArrivee": "2025-06-03T13:30:00.000Z",
+        "dimensions": {
+            "longueurMax": 4.0,
+            "largeurMax": 2.2,
+            "hauteurMax": 2.0
+        },
+        "poidsMaximum": 1200,
+        "typeMarchandise": "lourd",
+        "capaciteDisponible": 1,
+        "prix": 800,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": true,
+            "fumeurAccepte": false,
+            "conditionsSpeciales": "Équipement de levage disponible"
+        },
+        "nombrePlacesDisponibles": 1,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Oujda",
+            "latitude": 34.6814,
+            "longitude": -1.9086,
+            "adresse": "Centre-ville, Oujda"
+        },
+        "destination": {
+            "nom": "Casablanca",
+            "latitude": 33.5731,
+            "longitude": -7.5898,
+            "adresse": "Aéroport Mohammed V"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Fès",
+                "latitude": 34.0181,
+                "longitude": -5.0078,
+                "adresse": "Gare de Fès",
+                "ordre": 1
+            },
+            {
+                "nom": "Rabat",
+                "latitude": 34.0209,
+                "longitude": -6.8416,
+                "adresse": "Centre administratif",
+                "ordre": 2
+            }
+        ],
+        "dateDepart": "2025-06-04T06:00:00.000Z",
+        "dateArrivee": "2025-06-04T15:00:00.000Z",
+        "dimensions": {
+            "longueurMax": 2.0,
+            "largeurMax": 1.5,
+            "hauteurMax": 1.0
+        },
+        "poidsMaximum": 300,
+        "typeMarchandise": "normale",
+        "capaciteDisponible": 4,
+        "prix": 350,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": true,
+            "fumeurAccepte": true,
+            "conditionsSpeciales": "Arrêts fréquents autorisés"
+        },
+        "nombrePlacesDisponibles": 4,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Agadir",
+            "latitude": 30.4278,
+            "longitude": -9.5981,
+            "adresse": "Port d'Agadir"
+        },
+        "destination": {
+            "nom": "Marrakech",
+            "latitude": 31.6295,
+            "longitude": -7.9811,
+            "adresse": "Palmeraie, Marrakech"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Taroudant",
+                "latitude": 30.4703,
+                "longitude": -8.8769,
+                "adresse": "Souk Taroudant",
+                "ordre": 1
+            }
+        ],
+        "dateDepart": "2025-06-05T10:00:00.000Z",
+        "dateArrivee": "2025-06-05T16:00:00.000Z",
+        "dimensions": {
+            "longueurMax": 3.5,
+            "largeurMax": 2.5,
+            "hauteurMax": 1.8
+        },
+        "poidsMaximum": 1000,
+        "typeMarchandise": "fragile",
+        "capaciteDisponible": 2,
+        "prix": 550,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": false,
+            "fumeurAccepte": false,
+            "conditionsSpeciales": "Transport climatisé, emballage spécial"
+        },
+        "nombrePlacesDisponibles": 2,
+        "isUrgent": true,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Tanger",
+            "latitude": 35.7595,
+            "longitude": -5.8340,
+            "adresse": "Port de Tanger Med"
+        },
+        "destination": {
+            "nom": "Rabat",
+            "latitude": 34.0209,
+            "longitude": -6.8416,
+            "adresse": "Parlement, Rabat"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Kénitra",
+                "latitude": 34.2541,
+                "longitude": -6.5897,
+                "adresse": "Zone industrielle, Kénitra",
+                "ordre": 1
+            }
+        ],
+        "dateDepart": "2025-06-06T08:30:00.000Z",
+        "dateArrivee": "2025-06-06T12:30:00.000Z",
+        "dimensions": {
+            "longueurMax": 5.0,
+            "largeurMax": 2.8,
+            "hauteurMax": 2.5
+        },
+        "poidsMaximum": 2000,
+        "typeMarchandise": "lourd",
+        "capaciteDisponible": 1,
+        "prix": 1200,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": false,
+            "fumeurAccepte": false,
+            "conditionsSpeciales": "Transport industriel, équipement spécialisé"
+        },
+        "nombrePlacesDisponibles": 1,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Casablanca",
+            "latitude": 33.5731,
+            "longitude": -7.5898,
+            "adresse": "Ain Diab, Casablanca"
+        },
+        "destination": {
+            "nom": "El Jadida",
+            "latitude": 33.2316,
+            "longitude": -8.5007,
+            "adresse": "Cité portugaise, El Jadida"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Mohammedia",
+                "latitude": 33.6861,
+                "longitude": -7.38298,
+                "adresse": "Plage de Mohammedia",
+                "ordre": 1
+            }
+        ],
+        "dateDepart": "2025-06-07T14:00:00.000Z",
+        "dateArrivee": "2025-06-07T16:30:00.000Z",
+        "dimensions": {
+            "longueurMax": 2.0,
+            "largeurMax": 1.2,
+            "hauteurMax": 0.8
+        },
+        "poidsMaximum": 200,
+        "typeMarchandise": "normale",
+        "capaciteDisponible": 5,
+        "prix": 200,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": true,
+            "fumeurAccepte": true,
+            "conditionsSpeciales": "Transport de plage, équipement de loisir"
+        },
+        "nombrePlacesDisponibles": 5,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Fès",
+            "latitude": 34.0181,
+            "longitude": -5.0078,
+            "adresse": "Université Al Quaraouiyine"
+        },
+        "destination": {
+            "nom": "Meknès",
+            "latitude": 33.8935,
+            "longitude": -5.5473,
+            "adresse": "Place El Hedim, Meknès"
+        },
+        "etapesIntermediaires": [],
+        "dateDepart": "2025-06-08T09:00:00.000Z",
+        "dateArrivee": "2025-06-08T10:30:00.000Z",
+        "dimensions": {
+            "longueurMax": 1.5,
+            "largeurMax": 1.0,
+            "hauteurMax": 0.6
+        },
+        "poidsMaximum": 100,
+        "typeMarchandise": "normale",
+        "capaciteDisponible": 6,
+        "prix": 80,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": true,
+            "fumeurAccepte": false,
+            "conditionsSpeciales": "Transport étudiant, bagages légers"
+        },
+        "nombrePlacesDisponibles": 6,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Marrakech",
+            "latitude": 31.6295,
+            "longitude": -7.9811,
+            "adresse": "Jemaa el-Fnaa"
+        },
+        "destination": {
+            "nom": "Ouarzazate",
+            "latitude": 30.9333,
+            "longitude": -6.9000,
+            "adresse": "Studio Atlas, Ouarzazate"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Aït Ben Haddou",
+                "latitude": 31.0478,
+                "longitude": -7.1319,
+                "adresse": "Ksar Aït Ben Haddou",
+                "ordre": 1
+            }
+        ],
+        "dateDepart": "2025-06-09T07:00:00.000Z",
+        "dateArrivee": "2025-06-09T12:00:00.000Z",
+        "dimensions": {
+            "longueurMax": 3.0,
+            "largeurMax": 2.0,
+            "hauteurMax": 1.5
+        },
+        "poidsMaximum": 600,
+        "typeMarchandise": "fragile",
+        "capaciteDisponible": 3,
+        "prix": 450,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": false,
+            "fumeurAccepte": false,
+            "conditionsSpeciales": "Transport touristique, équipement photo"
+        },
+        "nombrePlacesDisponibles": 3,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Rabat",
+            "latitude": 34.0209,
+            "longitude": -6.8416,
+            "adresse": "Tour Hassan"
+        },
+        "destination": {
+            "nom": "Casablanca",
+            "latitude": 33.5731,
+            "longitude": -7.5898,
+            "adresse": "Mosquée Hassan II"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Temara",
+                "latitude": 33.9274,
+                "longitude": -6.9063,
+                "adresse": "Plage de Temara",
+                "ordre": 1
+            },
+            {
+                "nom": "Mohammedia",
+                "latitude": 33.6861,
+                "longitude": -7.38298,
+                "adresse": "Port de Mohammedia",
+                "ordre": 2
+            }
+        ],
+        "dateDepart": "2025-06-10T16:00:00.000Z",
+        "dateArrivee": "2025-06-10T19:00:00.000Z",
+        "dimensions": {
+            "longueurMax": 2.8,
+            "largeurMax": 1.8,
+            "hauteurMax": 1.3
+        },
+        "poidsMaximum": 400,
+        "typeMarchandise": "normale",
+        "capaciteDisponible": 4,
+        "prix": 300,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": true,
+            "fumeurAccepte": true,
+            "conditionsSpeciales": "Transport quotidien, horaires flexibles"
+        },
+        "nombrePlacesDisponibles": 4,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Agadir",
+            "latitude": 30.4278,
+            "longitude": -9.5981,
+            "adresse": "Plage d'Agadir"
+        },
+        "destination": {
+            "nom": "Essaouira",
+            "latitude": 31.5085,
+            "longitude": -9.7595,
+            "adresse": "Médina d'Essaouira"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Tamri",
+                "latitude": 30.6969,
+                "longitude": -9.8297,
+                "adresse": "Village de pêcheurs, Tamri",
+                "ordre": 1
+            }
+        ],
+        "dateDepart": "2025-06-11T10:30:00.000Z",
+        "dateArrivee": "2025-06-11T14:30:00.000Z",
+        "dimensions": {
+            "longueurMax": 2.2,
+            "largeurMax": 1.4,
+            "hauteurMax": 1.0
+        },
+        "poidsMaximum": 250,
+        "typeMarchandise": "normale",
+        "capaciteDisponible": 5,
+        "prix": 180,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": true,
+            "fumeurAccepte": false,
+            "conditionsSpeciales": "Transport côtier, vue mer"
+        },
+        "nombrePlacesDisponibles": 5,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Tanger",
+            "latitude": 35.7595,
+            "longitude": -5.8340,
+            "adresse": "Kasbah de Tanger"
+        },
+        "destination": {
+            "nom": "Tétouan",
+            "latitude": 35.5711,
+            "longitude": -5.3697,
+            "adresse": "Médina de Tétouan"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Asilah",
+                "latitude": 35.4661,
+                "longitude": -6.0403,
+                "adresse": "Médina d'Asilah",
+                "ordre": 1
+            }
+        ],
+        "dateDepart": "2025-06-12T11:00:00.000Z",
+        "dateArrivee": "2025-06-12T14:00:00.000Z",
+        "dimensions": {
+            "longueurMax": 1.8,
+            "largeurMax": 1.2,
+            "hauteurMax": 0.9
+        },
+        "poidsMaximum": 150,
+        "typeMarchandise": "normale",
+        "capaciteDisponible": 6,
+        "prix": 120,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": true,
+            "fumeurAccepte": true,
+            "conditionsSpeciales": "Transport culturel, visite guidée possible"
+        },
+        "nombrePlacesDisponibles": 6,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Casablanca",
+            "latitude": 33.5731,
+            "longitude": -7.5898,
+            "adresse": "Twin Center"
+        },
+        "destination": {
+            "nom": "Kénitra",
+            "latitude": 34.2541,
+            "longitude": -6.5897,
+            "adresse": "Université Ibn Tofail"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Rabat",
+                "latitude": 34.0209,
+                "longitude": -6.8416,
+                "adresse": "Université Mohammed V",
+                "ordre": 1
+            }
+        ],
+        "dateDepart": "2025-06-13T08:00:00.000Z",
+        "dateArrivee": "2025-06-13T11:00:00.000Z",
+        "dimensions": {
+            "longueurMax": 2.0,
+            "largeurMax": 1.3,
+            "hauteurMax": 0.8
+        },
+        "poidsMaximum": 200,
+        "typeMarchandise": "normale",
+        "capaciteDisponible": 5,
+        "prix": 150,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": false,
+            "fumeurAccepte": false,
+            "conditionsSpeciales": "Transport académique, wifi disponible"
+        },
+        "nombrePlacesDisponibles": 5,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Marrakech",
+            "latitude": 31.6295,
+            "longitude": -7.9811,
+            "adresse": "Palmeraie"
+        },
+        "destination": {
+            "nom": "Safi",
+            "latitude": 32.2833,
+            "longitude": -9.2333,
+            "adresse": "Port de Safi"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Youssoufia",
+                "latitude": 32.2500,
+                "longitude": -8.5333,
+                "adresse": "Centre-ville, Youssoufia",
+                "ordre": 1
+            }
+        ],
+        "dateDepart": "2025-06-14T06:30:00.000Z",
+        "dateArrivee": "2025-06-14T12:30:00.000Z",
+        "dimensions": {
+            "longueurMax": 4.5,
+            "largeurMax": 2.5,
+            "hauteurMax": 2.2
+        },
+        "poidsMaximum": 1500,
+        "typeMarchandise": "lourd",
+        "capaciteDisponible": 1,
+        "prix": 900,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": false,
+            "fumeurAccepte": false,
+            "conditionsSpeciales": "Transport industriel, équipement de sécurité"
+        },
+        "nombrePlacesDisponibles": 1,
+        "isUrgent": true,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Fès",
+            "latitude": 34.0181,
+            "longitude": -5.0078,
+            "adresse": "Bab Boujloud"
+        },
+        "destination": {
+            "nom": "Ifrane",
+            "latitude": 33.5267,
+            "longitude": -5.3550,
+            "adresse": "Centre-ville, Ifrane"
+        },
+        "etapesIntermediaires": [
+            {
+                "nom": "Azrou",
+                "latitude": 33.4333,
+                "longitude": -5.2167,
+                "adresse": "Cèdre Gouraud, Azrou",
+                "ordre": 1
+            }
+        ],
+        "dateDepart": "2025-06-15T09:00:00.000Z",
+        "dateArrivee": "2025-06-15T12:00:00.000Z",
+        "dimensions": {
+            "longueurMax": 2.5,
+            "largeurMax": 1.6,
+            "hauteurMax": 1.1
+        },
+        "poidsMaximum": 350,
+        "typeMarchandise": "normale",
+        "capaciteDisponible": 4,
+        "prix": 250,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": true,
+            "fumeurAccepte": false,
+            "conditionsSpeciales": "Transport montagne, équipement de randonnée"
+        },
+        "nombrePlacesDisponibles": 4,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    },
+    {
+        "conducteurId": "68557d2a131dfcf66fb337b0",
+        "lieuDepart": {
+            "nom": "Rabat",
+            "latitude": 34.0209,
+            "longitude": -6.8416,
+            "adresse": "Chellah"
+        },
+        "destination": {
+            "nom": "Salé",
+            "latitude": 34.0333,
+            "longitude": -6.8167,
+            "adresse": "Médina de Salé"
+        },
+        "etapesIntermediaires": [],
+        "dateDepart": "2025-06-16T15:00:00.000Z",
+        "dateArrivee": "2025-06-16T15:45:00.000Z",
+        "dimensions": {
+            "longueurMax": 1.5,
+            "largeurMax": 1.0,
+            "hauteurMax": 0.7
+        },
+        "poidsMaximum": 100,
+        "typeMarchandise": "normale",
+        "capaciteDisponible": 7,
+        "prix": 50,
+        "statut": "active",
+        "conditions": {
+            "accepteAnimaux": true,
+            "fumeurAccepte": true,
+            "conditionsSpeciales": "Transport local, trajet court"
+        },
+        "nombrePlacesDisponibles": 7,
+        "isUrgent": false,
+        "createdAt": "2025-06-20T15:08:49.098Z",
+        "updatedAt": "2025-06-20T15:08:49.098Z",
+        "__v": 0
+    }
+]

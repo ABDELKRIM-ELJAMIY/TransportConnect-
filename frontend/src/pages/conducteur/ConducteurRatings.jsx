@@ -1,100 +1,154 @@
-import React, { useState } from "react";
-import { Star, X, Menu, Filter, Search, ThumbsUp, MessageCircle, Calendar } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Star, X, Menu, Filter, Search, ThumbsUp, MessageCircle, Calendar, Reply, Send } from "lucide-react";
 import Sidebar from "../../components/conducteur/SidebarConducteur";
+import axios from "axios";
 
 const ConducteurRatings = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
+    const [evaluations, setEvaluations] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [userData, setUserData] = useState(null);
+    const [replyModal, setReplyModal] = useState({
+        isOpen: false,
+        evaluationId: null,
+        reply: ""
+    });
 
     const toggleSidebar = () => {
         setSidebarOpen(prev => !prev);
     };
 
-    const ratings = [
-        {
-            id: 1,
-            clientName: "Fatima Zahra",
-            rating: 5,
-            comment: "Excellent service ! Le conducteur était ponctuel et professionnel. Je recommande vivement.",
-            date: "2025-06-15",
-            trip: "Casablanca → Rabat",
-            isVerified: true,
-            helpful: 12
-        },
-        {
-            id: 2,
-            clientName: "Youssef El Amrani",
-            rating: 4,
-            comment: "Bon trajet, conducteur sympathique. Livraison dans les délais.",
-            date: "2025-06-14",
-            trip: "Rabat → Fès",
-            isVerified: true,
-            helpful: 8
-        },
-        {
-            id: 3,
-            clientName: "Amina Benjelloun",
-            rating: 5,
-            comment: "Service impeccable ! Le conducteur a pris soin de mes marchandises et a été très communicatif.",
-            date: "2025-06-13",
-            trip: "Marrakech → Agadir",
-            isVerified: false,
-            helpful: 15
-        },
-        {
-            id: 4,
-            clientName: "Hassan Tazi",
-            rating: 3,
-            comment: "Trajet correct mais un peu de retard au départ. Sinon tout s'est bien passé.",
-            date: "2025-06-12",
-            trip: "Tanger → Casablanca",
-            isVerified: true,
-            helpful: 5
-        },
-        {
-            id: 5,
-            clientName: "Leila Mansouri",
-            rating: 5,
-            comment: "Fantastique ! Conducteur très professionnel et véhicule impeccable. Je recommande !",
-            date: "2025-06-11",
-            trip: "Fès → Oujda",
-            isVerified: true,
-            helpful: 20
-        },
-        {
-            id: 6,
-            clientName: "Karim Alami",
-            rating: 4,
-            comment: "Bon service, ponctuel et respectueux. Je ferai appel à nouveau.",
-            date: "2025-06-10",
-            trip: "Agadir → Marrakech",
-            isVerified: false,
-            helpful: 7
+    // Fetch user data
+    const fetchUserData = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:5000/api/users/profile', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUserData(response.data.user);
+        } catch (err) {
+            console.error("Error fetching user data:", err);
         }
-    ];
+    };
+
+    // Fetch evaluations
+    const fetchEvaluations = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const token = localStorage.getItem('token');
+            const response = await axios.get(`http://localhost:5000/api/evaluations/user/${userData?._id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (response.data.success) {
+                console.log('Fetched evaluations:', response.data.data);
+                setEvaluations(response.data.data);
+            } else {
+                setError('Erreur lors du chargement des évaluations.');
+            }
+        } catch (err) {
+            console.error("Error fetching evaluations:", err);
+            setError('Erreur lors du chargement des évaluations.');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Reply to evaluation
+    const handleReply = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.patch(`http://localhost:5000/api/evaluations/${replyModal.evaluationId}/reply`, {
+                reponseEvalue: {
+                    commentaire: replyModal.reply,
+                    date: new Date()
+                }
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            // Update local state
+            setEvaluations(prev => prev.map(evaluation =>
+                evaluation._id === replyModal.evaluationId
+                    ? {
+                        ...evaluation,
+                        reponseEvalue: {
+                            commentaire: replyModal.reply,
+                            date: new Date()
+                        }
+                    }
+                    : evaluation
+            ));
+
+            // Close modal
+            setReplyModal({
+                isOpen: false,
+                evaluationId: null,
+                reply: ""
+            });
+
+            alert('Réponse envoyée avec succès!');
+        } catch (err) {
+            console.error("Error sending reply:", err);
+            alert('Erreur lors de l\'envoi de la réponse: ' + (err.response?.data?.message || err.message));
+        }
+    };
+
+    const openReplyModal = (evaluationId) => {
+        setReplyModal({
+            isOpen: true,
+            evaluationId,
+            reply: ""
+        });
+    };
+
+    const closeReplyModal = () => {
+        setReplyModal({
+            isOpen: false,
+            evaluationId: null,
+            reply: ""
+        });
+    };
+
+    useEffect(() => {
+        fetchUserData();
+    }, []);
+
+    useEffect(() => {
+        if (userData?._id) {
+            fetchEvaluations();
+        }
+    }, [userData]);
 
     const filters = [
-        { value: "all", label: "Tous", count: ratings.length },
-        { value: "5", label: "5 étoiles", count: ratings.filter(r => r.rating === 5).length },
-        { value: "4", label: "4 étoiles", count: ratings.filter(r => r.rating === 4).length },
-        { value: "3", label: "3 étoiles", count: ratings.filter(r => r.rating === 3).length },
-        { value: "verified", label: "Vérifiés", count: ratings.filter(r => r.isVerified).length }
+        { value: "all", label: "Tous", count: evaluations.length },
+        { value: "5", label: "5 étoiles", count: evaluations.filter(r => r.note === 5).length },
+        { value: "4", label: "4 étoiles", count: evaluations.filter(r => r.note === 4).length },
+        { value: "3", label: "3 étoiles", count: evaluations.filter(r => r.note === 3).length },
+        { value: "2", label: "2 étoiles", count: evaluations.filter(r => r.note === 2).length },
+        { value: "1", label: "1 étoile", count: evaluations.filter(r => r.note === 1).length }
     ];
 
-    const averageRating = ratings.reduce((acc, rating) => acc + rating.rating, 0) / ratings.length;
-    const totalRatings = ratings.length;
-    const fiveStarCount = ratings.filter(r => r.rating === 5).length;
-    const fourStarCount = ratings.filter(r => r.rating === 4).length;
-    const threeStarCount = ratings.filter(r => r.rating === 3).length;
+    const averageRating = evaluations.length > 0 ?
+        evaluations.reduce((acc, evaluation) => acc + evaluation.note, 0) / evaluations.length : 0;
+    const totalRatings = evaluations.length;
+    const fiveStarCount = evaluations.filter(r => r.note === 5).length;
+    const fourStarCount = evaluations.filter(r => r.note === 4).length;
+    const threeStarCount = evaluations.filter(r => r.note === 3).length;
+    const twoStarCount = evaluations.filter(r => r.note === 2).length;
+    const oneStarCount = evaluations.filter(r => r.note === 1).length;
 
-    const filteredRatings = ratings.filter(rating => {
+    const filteredEvaluations = evaluations.filter(evaluation => {
         const matchesFilter = selectedFilter === "all" ||
-            (selectedFilter === "verified" && rating.isVerified) ||
-            rating.rating.toString() === selectedFilter;
-        const matchesSearch = rating.clientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            rating.comment.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            rating.trip.toLowerCase().includes(searchTerm.toLowerCase());
+            evaluation.note.toString() === selectedFilter;
+        const matchesSearch = evaluation.evaluateurId?.prenom?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            evaluation.evaluateurId?.nom?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            evaluation.commentaire?.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesFilter && matchesSearch;
     });
 
@@ -221,67 +275,138 @@ const ConducteurRatings = () => {
                         </div>
 
                         <div className="space-y-4">
-                            {filteredRatings.map((rating) => (
-                                <div key={rating.id} className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 hover:shadow-lg transition-shadow">
+                            {filteredEvaluations.map((evaluation) => (
+                                <div key={evaluation._id} className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 hover:shadow-lg transition-shadow">
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center space-x-3">
                                             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                                                 <span className="text-blue-600 font-semibold">
-                                                    {rating.clientName.charAt(0)}
+                                                    {evaluation.evaluateurId?.prenom?.charAt(0) || ''}
                                                 </span>
                                             </div>
                                             <div>
                                                 <div className="flex items-center space-x-2">
-                                                    <h3 className="font-semibold text-gray-800">{rating.clientName}</h3>
-                                                    {rating.isVerified && (
-                                                        <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
-                                                            Vérifié
-                                                        </span>
-                                                    )}
+                                                    <h3 className="font-semibold text-gray-800">{evaluation.evaluateurId?.prenom} {evaluation.evaluateurId?.nom}</h3>
                                                 </div>
                                                 <div className="flex items-center space-x-2 text-sm text-gray-500">
                                                     <Calendar size={14} />
-                                                    <span>{rating.date}</span>
+                                                    <span>{new Date(evaluation.createdAt).toLocaleDateString('fr-FR')}</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            {renderStars(rating.rating)}
+                                            {renderStars(evaluation.note)}
                                         </div>
                                     </div>
 
                                     <div className="mb-4">
-                                        <p className="text-gray-700 mb-2">{rating.comment}</p>
-                                        <div className="text-sm text-gray-500">
-                                            Trajet: {rating.trip}
-                                        </div>
+                                        <p className="text-gray-700 mb-2">{evaluation.commentaire}</p>
                                     </div>
+
+                                    {/* Show existing reply if any */}
+                                    {evaluation.reponseEvalue && (
+                                        <div className="mb-4 p-3 bg-gray-50 rounded-lg border-l-4 border-blue-500">
+                                            <div className="flex items-center space-x-2 mb-2">
+                                                <span className="text-sm font-medium text-gray-700">Votre réponse:</span>
+                                                <span className="text-xs text-gray-500">
+                                                    {new Date(evaluation.reponseEvalue.date).toLocaleDateString('fr-FR')}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-gray-600">{evaluation.reponseEvalue.commentaire}</p>
+                                        </div>
+                                    )}
 
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center space-x-4">
                                             <button className="flex items-center space-x-1 text-gray-500 hover:text-blue-600 transition-colors">
                                                 <ThumbsUp size={16} />
-                                                <span className="text-sm">Utile ({rating.helpful})</span>
+                                                <span className="text-sm">Utile</span>
                                             </button>
-                                            <button className="flex items-center space-x-1 text-gray-500 hover:text-blue-600 transition-colors">
-                                                <MessageCircle size={16} />
-                                                <span className="text-sm">Répondre</span>
-                                            </button>
+                                            {!evaluation.reponseEvalue && (
+                                                <button
+                                                    onClick={() => openReplyModal(evaluation._id)}
+                                                    className="flex items-center space-x-1 text-gray-500 hover:text-blue-600 transition-colors"
+                                                >
+                                                    <Reply size={16} />
+                                                    <span className="text-sm">Répondre</span>
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        {filteredRatings.length === 0 && (
+                        {filteredEvaluations.length === 0 && !loading && (
                             <div className="text-center py-12">
                                 <Star className="mx-auto text-gray-400 mb-4" size={48} />
                                 <h3 className="text-lg font-medium text-gray-600 mb-2">Aucun avis trouvé</h3>
-                                <p className="text-gray-500">Essayez de modifier vos filtres ou votre recherche</p>
+                                <p className="text-gray-500">Vous n'avez pas encore reçu d'évaluations</p>
+                            </div>
+                        )}
+
+                        {loading && (
+                            <div className="text-center py-12">
+                                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                                <p className="text-gray-600">Chargement des évaluations...</p>
+                            </div>
+                        )}
+
+                        {error && (
+                            <div className="text-center py-12">
+                                <div className="text-red-500 mb-4">⚠️</div>
+                                <h3 className="text-lg font-medium text-gray-600 mb-2">Erreur</h3>
+                                <p className="text-gray-500">{error}</p>
                             </div>
                         )}
                     </div>
                 </div>
+
+                {/* Reply Modal */}
+                {replyModal.isOpen && (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                        <div className="bg-white rounded-xl p-6 w-full max-w-md mx-4">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-semibold text-gray-800">Répondre à l'évaluation</h3>
+                                <button
+                                    onClick={closeReplyModal}
+                                    className="text-gray-400 hover:text-gray-600 transition-colors"
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            <div className="mb-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Votre réponse
+                                </label>
+                                <textarea
+                                    value={replyModal.reply}
+                                    onChange={(e) => setReplyModal(prev => ({ ...prev, reply: e.target.value }))}
+                                    placeholder="Partagez votre point de vue..."
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                                    rows={4}
+                                />
+                            </div>
+
+                            <div className="flex space-x-3">
+                                <button
+                                    onClick={closeReplyModal}
+                                    className="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                                >
+                                    Annuler
+                                </button>
+                                <button
+                                    onClick={handleReply}
+                                    disabled={!replyModal.reply.trim()}
+                                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-300 disabled:cursor-not-allowed"
+                                >
+                                    Envoyer
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </main>
         </div>
     );

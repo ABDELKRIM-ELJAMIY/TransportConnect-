@@ -1,108 +1,77 @@
 // src/pages/conducteur/Historique.jsx
-import React, { useState } from "react";
-import { MapPin, CalendarDays, Truck, X, Menu, Star, Package, DollarSign, Clock, Filter, Search } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { MapPin, CalendarDays, Truck, X, Menu, Star, Package, DollarSign, Clock, Filter, Search, Bell } from "lucide-react";
 import Sidebar from "../../components/conducteur/SidebarConducteur";
+import axios from "axios";
+
+const iconMap = {
+    Truck,
+    Star,
+    Package,
+    DollarSign,
+    Clock,
+    Bell,
+};
 
 const Historique = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState("all");
     const [searchTerm, setSearchTerm] = useState("");
+    const [historyData, setHistoryData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [userData, setUserData] = useState(null);
 
     const toggleSidebar = () => {
         setSidebarOpen(prev => !prev);
     };
 
-    const historyData = [
-        {
-            id: 1,
-            type: "trip",
-            title: "Trajet Casablanca → Rabat",
-            description: "Livraison d'électronique terminée avec succès",
-            date: "2025-06-15",
-            time: "14:30",
-            status: "completed",
-            earnings: 1200,
-            rating: 5,
-            icon: Truck
-        },
-        {
-            id: 2,
-            type: "announcement",
-            title: "Nouvelle annonce créée",
-            description: "Annonce pour trajet Rabat → Fès",
-            date: "2025-06-14",
-            time: "09:15",
-            status: "active",
-            icon: Package
-        },
-        {
-            id: 3,
-            type: "rating",
-            title: "Nouvel avis reçu",
-            description: "5 étoiles de Fatima Zahra",
-            date: "2025-06-13",
-            time: "16:45",
-            status: "positive",
-            icon: Star
-        },
-        {
-            id: 4,
-            type: "payment",
-            title: "Paiement reçu",
-            description: "Paiement pour trajet Tanger → Marrakech",
-            date: "2025-06-12",
-            time: "11:20",
-            status: "completed",
-            earnings: 1500,
-            icon: DollarSign
-        },
-        {
-            id: 5,
-            type: "trip",
-            title: "Trajet annulé",
-            description: "Trajet Agadir → Casablanca annulé par le client",
-            date: "2025-06-11",
-            time: "08:30",
-            status: "cancelled",
-            icon: Truck
-        },
-        {
-            id: 6,
-            type: "announcement",
-            title: "Annonce modifiée",
-            description: "Prix mis à jour pour trajet Fès → Tanger",
-            date: "2025-06-10",
-            time: "13:45",
-            status: "updated",
-            icon: Package
-        },
-        {
-            id: 7,
-            type: "rating",
-            title: "Avis mis à jour",
-            description: "Note modifiée de 4 à 5 étoiles",
-            date: "2025-06-09",
-            time: "17:30",
-            status: "positive",
-            icon: Star
-        },
-        {
-            id: 8,
-            type: "trip",
-            title: "Trajet en cours",
-            description: "Début du trajet Marrakech → Oujda",
-            date: "2025-06-08",
-            time: "06:00",
-            status: "in_progress",
-            icon: Truck
+    // Fetch user data
+    const fetchUserData = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.get('http://localhost:5000/api/auth/me', {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            setUserData(response.data.user);
+        } catch (err) {
+            console.error("Error fetching user data:", err);
         }
-    ];
+    };
+
+    useEffect(() => {
+        const fetchHistory = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('http://localhost:5000/api/historique', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                if (response.data.success) {
+                    setHistoryData(response.data.data);
+                } else {
+                    setError('Erreur lors du chargement de l\'historique.');
+                }
+            } catch (err) {
+                console.error("Historique fetch error:", err);
+                setError('Erreur lors du chargement de l\'historique.');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchUserData();
+        fetchHistory();
+    }, []);
 
     const filters = [
         { value: "all", label: "Tout", icon: Clock },
         { value: "trip", label: "Trajets", icon: Truck },
-        { value: "announcement", label: "Annonces", icon: Package },
+        { value: "demand", label: "Demandes", icon: Package },
         { value: "rating", label: "Avis", icon: Star },
+        { value: "notification", label: "Notifications", icon: Bell },
         { value: "payment", label: "Paiements", icon: DollarSign }
     ];
 
@@ -149,9 +118,16 @@ const Historique = () => {
         return matchesFilter && matchesSearch;
     });
 
+    if (loading) {
+        return <div className="text-center py-10 text-gray-500">Chargement de l'historique...</div>;
+    }
+    if (error) {
+        return <div className="text-center py-10 text-red-500">{error}</div>;
+    }
+
     return (
         <div className="flex min-h-screen bg-gray-50">
-            <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+            <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} userData={userData} />
 
             <main
                 className={`flex-1 min-h-screen bg-gray-50 transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-0"
@@ -217,20 +193,22 @@ const Historique = () => {
 
                     <div className="space-y-4">
                         {filteredData.map((item) => {
-                            const Icon = item.icon;
+                            const Icon = iconMap[item.icon] || Clock;
                             return (
                                 <div key={item.id} className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 hover:shadow-lg transition-shadow">
                                     <div className="flex items-start space-x-4">
                                         <div className={`w-12 h-12 rounded-full flex items-center justify-center ${item.type === "trip" ? "bg-blue-100" :
-                                            item.type === "announcement" ? "bg-green-100" :
+                                            item.type === "demand" ? "bg-green-100" :
                                                 item.type === "rating" ? "bg-yellow-100" :
-                                                    "bg-purple-100"
+                                                    item.type === "notification" ? "bg-purple-100" :
+                                                        "bg-orange-100"
                                             }`}>
                                             <Icon className={
                                                 item.type === "trip" ? "text-blue-600" :
-                                                    item.type === "announcement" ? "text-green-600" :
+                                                    item.type === "demand" ? "text-green-600" :
                                                         item.type === "rating" ? "text-yellow-600" :
-                                                            "text-purple-600"
+                                                            item.type === "notification" ? "text-purple-600" :
+                                                                "text-orange-600"
                                             } size={24} />
                                         </div>
 

@@ -1,6 +1,6 @@
 // src/pages/conducteur/MesTrajets.jsx
 import React, { useState, useEffect } from "react";
-import { X, Menu, Truck, MapPin, Calendar, Clock, Package, User, Phone, Mail, Navigation, CheckCircle, Edit, Eye } from "lucide-react";
+import { X, Menu, Truck, MapPin, Calendar, Clock, Package, User, Phone, Mail, Navigation, CheckCircle, Edit, Eye, CheckSquare } from "lucide-react";
 import Sidebar from "../../components/conducteur/SidebarConducteur";
 import axios from "axios";
 import { toast } from 'react-hot-toast';
@@ -145,6 +145,28 @@ const MesTrajets = () => {
         }
     };
 
+    const handleMarkAsComplete = async (annonceId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const response = await axios.put(`http://localhost:5000/api/annonces/${annonceId}/complete`, {}, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            if (response.data.success) {
+                toast.success('Annonce marquée comme terminée avec succès!');
+                // Refresh the annonces list to show updated status
+                const updatedAnnonces = annonces.map(annonce =>
+                    annonce._id === annonceId
+                        ? { ...annonce, statut: 'complete', dateArrivee: new Date() }
+                        : annonce
+                );
+                setAnnonces(updatedAnnonces);
+            }
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Erreur lors de la finalisation de l\'annonce');
+        }
+    };
+
     const TripDetailsModal = ({ trip, onClose }) => {
         if (!trip) return null;
 
@@ -246,6 +268,10 @@ const MesTrajets = () => {
                             <button className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors" onClick={() => handleTrajetAction(trip.raw._id, 'terminer')}>
                                 Terminer
                             </button>
+                            <button className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center space-x-2" onClick={() => handleMarkAsComplete(trip.raw._id)}>
+                                <CheckSquare size={16} />
+                                <span>Marquer Terminé</span>
+                            </button>
                             <button className="flex-1 bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors" onClick={() => handleTrajetAction(trip.raw._id, 'annuler')}>
                                 Annuler
                             </button>
@@ -335,8 +361,8 @@ const MesTrajets = () => {
                                             <MapPin className="mr-2 text-blue-600" size={20} />
                                             {(annonce.lieuDepart?.nom || annonce.lieuDepart) + ' → ' + (annonce.destination?.nom || annonce.destination)}
                                         </div>
-                                        <span className="text-sm px-2 py-1 rounded-full font-medium bg-gray-100 text-gray-700">
-                                            {annonce.statut}
+                                        <span className={`text-sm px-2 py-1 rounded-full font-medium ${getStatusColor(annonce.statut)}`}>
+                                            {getStatusText(annonce.statut)}
                                         </span>
                                     </div>
                                     <div className="mb-2 text-sm text-gray-600">
@@ -346,19 +372,38 @@ const MesTrajets = () => {
                                         Poids max: {annonce.poidsMaximum} kg<br />
                                         Prix: {annonce.prix} MAD
                                     </div>
-                                    {trajet ? (
-                                        <div className="mt-2">
-                                            <div className="text-green-700 font-semibold mb-2">Trajet: {trajet.statut}</div>
-                                            <div className="flex space-x-2">
-                                                <button className="bg-blue-600 text-white px-3 py-1 rounded" onClick={() => handleTrajetAction(annonce._id, 'commencer')}>Commencer</button>
-                                                <button className="bg-green-600 text-white px-3 py-1 rounded" onClick={() => handleTrajetAction(annonce._id, 'terminer')}>Terminer</button>
-                                                <button className="bg-red-600 text-white px-3 py-1 rounded" onClick={() => handleTrajetAction(annonce._id, 'annuler')}>Annuler</button>
-                                                <button className="bg-gray-600 text-white px-3 py-1 rounded" onClick={() => handleTrajetAction(annonce._id, 'suivre')}>Suivre</button>
-                                            </div>
+
+                                    {/* Action buttons for all announcements */}
+                                    <div className="mt-4">
+                                        <div className="flex space-x-2 flex-wrap">
+                                            {/* Mark as Complete button - always visible for active announcements */}
+                                            {annonce.statut === 'active' && (
+                                                <button
+                                                    className="bg-purple-600 text-white px-3 py-1 rounded text-sm flex items-center space-x-1 hover:bg-purple-700 transition-colors"
+                                                    onClick={() => handleMarkAsComplete(annonce._id)}
+                                                >
+                                                    <CheckSquare size={14} />
+                                                    <span>Marquer Terminé</span>
+                                                </button>
+                                            )}
+
+                                            {/* Trajet-specific buttons - only if trajet exists */}
+                                            {trajet && (
+                                                <>
+                                                    <button className="bg-blue-600 text-white px-3 py-1 rounded text-sm" onClick={() => handleTrajetAction(annonce._id, 'commencer')}>Commencer</button>
+                                                    <button className="bg-green-600 text-white px-3 py-1 rounded text-sm" onClick={() => handleTrajetAction(annonce._id, 'terminer')}>Terminer</button>
+                                                    <button className="bg-red-600 text-white px-3 py-1 rounded text-sm" onClick={() => handleTrajetAction(annonce._id, 'annuler')}>Annuler</button>
+                                                    <button className="bg-gray-600 text-white px-3 py-1 rounded text-sm" onClick={() => handleTrajetAction(annonce._id, 'suivre')}>Suivre</button>
+                                                </>
+                                            )}
                                         </div>
-                                    ) : (
-                                        <div className="text-yellow-600 font-semibold mt-2">Trajet non démarré</div>
-                                    )}
+
+                                        {trajet ? (
+                                            <div className="text-green-700 font-semibold mt-2">Trajet: {trajet.statut}</div>
+                                        ) : (
+                                            <div className="text-yellow-600 font-semibold mt-2">Trajet non démarré</div>
+                                        )}
+                                    </div>
                                 </div>
                             );
                         })}
@@ -376,4 +421,4 @@ const MesTrajets = () => {
     );
 };
 
-export default MesTrajets; 
+export default MesTrajets;

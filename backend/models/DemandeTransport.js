@@ -16,18 +16,18 @@ const demandeTransportSchema = new mongoose.Schema({
         required: true
     },
     dimensions: {
-        longueur: { type: Number, required: true },
-        largeur: { type: Number, required: true },
-        hauteur: { type: Number, required: true }
+        longueur: { type: Number, required: false },
+        largeur: { type: Number, required: false },
+        hauteur: { type: Number, required: false }
     },
     poids: {
         type: Number,
-        required: true
+        required: false
     },
     typeColis: {
         type: String,
         enum: ['fragile', 'normale', 'dangereuse', 'alimentaire', 'electronique', 'autre'],
-        required: true
+        required: false
     },
     statut: {
         type: String,
@@ -62,7 +62,12 @@ const demandeTransportSchema = new mongoose.Schema({
         telephone: String
     },
     datePreferenceRecuperation: Date,
-    datePreferenceLivraison: Date
+    datePreferenceLivraison: Date,
+    inHistorique: {
+        type: Boolean,
+        default: false
+    },
+    dateFin: Date
 }, { timestamps: true });
 
 demandeTransportSchema.index({ expediteurId: 1 });

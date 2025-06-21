@@ -6,7 +6,8 @@ const {
     getAnnonceById,
     updateAnnonce,
     deleteAnnonce,
-    getMyAnnonces
+    getMyAnnonces,
+    completeAnnonce
 } = require('../controllers/annonceController');
 const { getDemandesByAnnonce } = require('../controllers/demandeController');
 
@@ -23,6 +24,7 @@ router.get('/mine', authorizeRoles('conducteur'), getMyAnnonces);
 router.get('/:id', getAnnonceById);
 router.get('/:id/demandes', authorizeRoles('conducteur', 'admin'), getDemandesByAnnonce);
 router.put('/:id', updateAnnonce);
+router.put('/:id/complete', authorizeRoles('conducteur', 'admin'), completeAnnonce);
 router.delete('/:id', deleteAnnonce);
 
 module.exports = router; 

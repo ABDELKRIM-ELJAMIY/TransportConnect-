@@ -4,8 +4,10 @@ const {
     createDemande,
     getMyDemandes,
     getDemandesByAnnonce,
+    getMyDemandesAsConducteur,
     updateDemandeStatus,
-    deleteDemande
+    deleteDemande,
+    migrateHistoriqueDemandes
 } = require('../controllers/demandeController');
 
 const { protect, authorizeRoles } = require('../middlewares/auth');
@@ -15,8 +17,10 @@ router.use(protect);
 
 router.post('/', authorizeRoles('expediteur'), validateDemande, createDemande);
 router.get('/mine', authorizeRoles('expediteur'), getMyDemandes);
+router.get('/mine-conducteur', authorizeRoles('conducteur'), getMyDemandesAsConducteur);
 router.get('/annonce/:id', authorizeRoles('conducteur', 'admin'), getDemandesByAnnonce);
 router.patch('/:id/status', authorizeRoles('conducteur', 'admin'), updateDemandeStatus);
 router.delete('/:id', authorizeRoles('expediteur', 'admin'), deleteDemande);
+router.post('/migrate-historique', authorizeRoles('admin'), migrateHistoriqueDemandes);
 
 module.exports = router; 
